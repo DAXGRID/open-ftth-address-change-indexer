@@ -17,4 +17,8 @@
     </AssemblyAttribute>
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="OpenFTTH.Core.Address" Version="0.13.1" />
+  </ItemGroup>
+
 </Project>
