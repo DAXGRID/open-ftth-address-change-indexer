@@ -1,14 +1,38 @@
-﻿namespace OpenFTTH.AddressChangeIndexer;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using OpenFTTH.EventSourcing;
+
+namespace OpenFTTH.AddressChangeIndexer;
 
 internal static class Program
 {
-    public static void Main()
+    public static async Task Main()
     {
-        Console.WriteLine("Hello!");
-    }
+        using var host = HostConfig.Configure();
+        var logger = host.Services
+            .GetService<ILoggerFactory>()
+            !.CreateLogger(nameof(Program));
 
-    public static int Setup()
-    {
-        return 1;
+        try
+        {
+            if (logger is null)
+            {
+                throw new InvalidOperationException(
+                    $"{nameof(ILogger)} is not configured.");
+            }
+
+            await host.StartAsync().ConfigureAwait(false);
+            await host.WaitForShutdownAsync().ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            logger!.LogCritical("{Exception}", ex);
+            throw;
+        }
+        finally
+        {
+            logger.LogInformation("Shutting down...");
+        }
     }
 }

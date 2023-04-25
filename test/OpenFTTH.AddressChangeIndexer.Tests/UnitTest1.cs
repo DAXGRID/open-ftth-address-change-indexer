@@ -1,10 +1,10 @@
 namespace OpenFTTH.AddressChangeIndexer.Tests;
 
-public class UnitTest1
+public class AddressChangeTest
 {
     [Fact]
-    public void Test1()
+    public void Find_returns_name_changed()
     {
-        Assert.Equal(1, Program.Setup());
+
     }
 }
