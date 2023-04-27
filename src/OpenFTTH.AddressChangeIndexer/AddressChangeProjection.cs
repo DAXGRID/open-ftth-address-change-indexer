@@ -67,8 +67,8 @@ internal sealed record UnitAddress
 
 internal sealed class AddressChangeProjection : ProjectionBase
 {
-    private Dictionary<Guid, UnitAddress> _unitAddressIdToUnitAddress = new();
-    public readonly Dictionary<Guid, AccessAddress> _accessAddressIdToAccessAddress = new();
+    private readonly Dictionary<Guid, UnitAddress> _unitAddressIdToUnitAddress = new();
+    private readonly Dictionary<Guid, AccessAddress> _accessAddressIdToAccessAddress = new();
 
     public AddressChangeProjection()
     {
