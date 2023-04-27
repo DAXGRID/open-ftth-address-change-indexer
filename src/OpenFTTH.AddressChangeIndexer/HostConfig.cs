@@ -44,7 +44,7 @@ internal static class HostConfig
 
             services.AddProjections(new Assembly[]
             {
-                AppDomain.CurrentDomain.Load("OpenFTTH.Core.Address")
+                AppDomain.CurrentDomain.Load("OpenFTTH.AddressChangeIndexer")
             });
         });
     }

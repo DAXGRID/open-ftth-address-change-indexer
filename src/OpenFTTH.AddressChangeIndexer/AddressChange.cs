@@ -3,29 +3,29 @@ namespace OpenFTTH.AddressChangeIndexer;
 internal enum AddressChangeType
 {
     New,
-    CoordChanged,
-    HouseNumber,
-    StreetNumber,
-    StatusChanged,
+    CoordinateChanged,
     Deleted
 }
 
 internal sealed record AddressChange
 {
     public Guid Id { get; init; }
+    public Guid EventId { get; init; }
     public AddressChangeType ChangeType { get; init; }
-    public double EastCoordinate { get; init;}
-    public double NorthCoordinate { get; init;}
+    public string Before { get; init;}
+    public string After { get; init;}
 
     public AddressChange(
         Guid id,
+        Guid eventId,
         AddressChangeType changeType,
-        double eastCoordinate,
-        double northCoordinate)
+        string before,
+        string after)
     {
         Id = id;
+        EventId = eventId;
         ChangeType = changeType;
-        EastCoordinate = eastCoordinate;
-        NorthCoordinate = northCoordinate;
+        Before = before;
+        After = after;
     }
 }

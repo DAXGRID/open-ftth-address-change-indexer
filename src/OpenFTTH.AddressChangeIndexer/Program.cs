@@ -13,6 +13,7 @@ internal static class Program
         var logger = host.Services
             .GetService<ILoggerFactory>()
             !.CreateLogger(nameof(Program));
+        var eventStore = host.Services.GetService<IEventStore>();
 
         try
         {
@@ -21,6 +22,8 @@ internal static class Program
                 throw new InvalidOperationException(
                     $"{nameof(ILogger)} is not configured.");
             }
+
+            host.Services.GetService<IEventStore>()!.ScanForProjections();
 
             await host.StartAsync().ConfigureAwait(false);
             await host.WaitForShutdownAsync().ConfigureAwait(false);
