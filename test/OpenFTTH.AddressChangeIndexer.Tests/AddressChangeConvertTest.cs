@@ -48,8 +48,8 @@ public sealed class AddressChangeConvertTest
             unitAddressId: unitAddressId,
             eventId: eventId,
             externalUpdated: externalUpdated,
-            before: accessAddressIdBefore,
-            after: accessAddressIdAfter);
+            accessAddressIdBefore: accessAddressIdBefore,
+            accessAddressIdAfter: accessAddressIdAfter);
 
         result.Should().BeEquivalentTo(expected);
     }
