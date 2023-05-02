@@ -2,7 +2,7 @@ using OpenFTTH.Core.Address;
 
 namespace OpenFTTH.AddressChangeIndexer;
 
-public sealed class AddressChangeConvertTest
+public sealed class UnitAddressChangeConvertTest
 {
     [Fact]
     public void Unit_address_created_is_converted_to_address_change()
