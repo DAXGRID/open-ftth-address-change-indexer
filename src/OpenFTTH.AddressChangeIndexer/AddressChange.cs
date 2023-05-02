@@ -58,16 +58,16 @@ internal static class UnitAddressChangeConvert
         Guid unitAddressId,
         Guid eventId,
         DateTime? externalUpdated,
-        Guid before,
-        Guid after)
+        Guid accessAddressIdBefore,
+        Guid accessAddressIdAfter)
     {
         return new AddressChange(
             unitAddressId: unitAddressId,
             eventId: eventId,
             changeType: AddressChangeType.UnitAddressAccessAddressIdChanged,
             externalUpdated: externalUpdated,
-            before: before.ToString(),
-            after: after.ToString());
+            before: accessAddressIdBefore.ToString(),
+            after: accessAddressIdAfter.ToString());
     }
 
     public static AddressChange StatusChanged(
