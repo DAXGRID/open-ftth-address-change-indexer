@@ -12,7 +12,7 @@ internal static class UnitAddressChangeConvert
         return new AddressChange(
             unitAddressId: unitAddressId,
             eventId: eventId,
-            changeType: AddressChangeType.UnitAddressCreated,
+            changeType: AddressChangeType.AddressCreated,
             externalUpdated: externalUpdated,
             before: null,
             after: null);
@@ -28,7 +28,7 @@ internal static class UnitAddressChangeConvert
         return new AddressChange(
             unitAddressId: unitAddressId,
             eventId: eventId,
-            changeType: AddressChangeType.UnitAddressAccessAddressIdChanged,
+            changeType: AddressChangeType.AccessAddressIdChanged,
             externalUpdated: externalUpdated,
             before: accessAddressIdBefore.ToString(),
             after: accessAddressIdAfter.ToString());
@@ -44,7 +44,7 @@ internal static class UnitAddressChangeConvert
         return new AddressChange(
             unitAddressId: unitAddressId,
             eventId: eventId,
-            changeType: AddressChangeType.UnitAddressStatusChanged,
+            changeType: AddressChangeType.StatusChanged,
             externalUpdated: externalUpdated,
             before: Enum.GetName(typeof(UnitAddressStatus), statusBefore),
             after: Enum.GetName(typeof(UnitAddressStatus), statusAfter));
@@ -60,7 +60,7 @@ internal static class UnitAddressChangeConvert
         return new AddressChange(
             unitAddressId: unitAddressId,
             eventId: eventId,
-            changeType: AddressChangeType.UnitAddressFloorNameChanged,
+            changeType: AddressChangeType.FloorNameChanged,
             externalUpdated: externalUpdated,
             before: floorNameBefore,
             after: floorNameAfter);
@@ -76,7 +76,7 @@ internal static class UnitAddressChangeConvert
         return new AddressChange(
             unitAddressId: unitAddressId,
             eventId: eventId,
-            changeType: AddressChangeType.UnitAddressSuiteNameChanged,
+            changeType: AddressChangeType.SuiteNameChanged,
             externalUpdated: externalUpdated,
             before: suiteNameBefore,
             after: suiteNameAfter);
@@ -90,7 +90,7 @@ internal static class UnitAddressChangeConvert
         return new AddressChange(
             unitAddressId: unitAddressId,
             eventId: eventId,
-            changeType: AddressChangeType.UnitAddressDeleted,
+            changeType: AddressChangeType.AddressDeleted,
             externalUpdated: externalUpdated,
             before: null,
             after: null);

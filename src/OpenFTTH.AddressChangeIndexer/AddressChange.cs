@@ -2,12 +2,13 @@ namespace OpenFTTH.AddressChangeIndexer;
 
 internal enum AddressChangeType
 {
-    UnitAddressCreated,
-    UnitAddressAccessAddressIdChanged,
-    UnitAddressStatusChanged,
-    UnitAddressFloorNameChanged,
-    UnitAddressSuiteNameChanged,
-    UnitAddressDeleted
+    AddressCreated,
+    AccessAddressIdChanged,
+    StatusChanged,
+    FloorNameChanged,
+    SuiteNameChanged,
+    MunicipalCodeChanged,
+    AddressDeleted
 }
 
 internal sealed record AddressChange

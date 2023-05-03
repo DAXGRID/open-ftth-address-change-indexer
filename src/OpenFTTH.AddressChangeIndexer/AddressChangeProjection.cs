@@ -1,7 +1,7 @@
-using System.Threading.Channels;
 using OpenFTTH.Core.Address;
 using OpenFTTH.Core.Address.Events;
 using OpenFTTH.EventSourcing;
+using System.Threading.Channels;
 
 namespace OpenFTTH.AddressChangeIndexer;
 
@@ -73,16 +73,10 @@ internal sealed class AddressChangeProjection : ProjectionBase
     private readonly Channel<AddressChange> _addressChangesChannel = Channel.CreateUnbounded<AddressChange>();
     private readonly Dictionary<Guid, UnitAddress> _unitAddressIdToUnitAddress = new();
     private readonly Dictionary<Guid, AccessAddress> _accessAddressIdToAccessAddress = new();
+    private readonly Dictionary<Guid, List<Guid>> _accessAddressIdToUnitAddressIds = new();
 
     public AddressChangeProjection()
     {
-        ProjectEventAsync<UnitAddressCreated>(ProjectAsync);
-        ProjectEventAsync<UnitAddressAccessAddressIdChanged>(ProjectAsync);
-        ProjectEventAsync<UnitAddressStatusChanged>(ProjectAsync);
-        ProjectEventAsync<UnitAddressFloorNameChanged>(ProjectAsync);
-        ProjectEventAsync<UnitAddressSuiteNameChanged>(ProjectAsync);
-        ProjectEventAsync<UnitAddressDeleted>(ProjectAsync);
-
         ProjectEventAsync<AccessAddressCreated>(ProjectAsync);
         ProjectEventAsync<AccessAddressMunicipalCodeChanged>(ProjectAsync);
         ProjectEventAsync<AccessAddressStatusChanged>(ProjectAsync);
@@ -93,6 +87,13 @@ internal sealed class AddressChangeProjection : ProjectionBase
         ProjectEventAsync<AccessAddressRoadIdChanged>(ProjectAsync);
         ProjectEventAsync<AccessAddressCoordinateChanged>(ProjectAsync);
         ProjectEventAsync<AccessAddressDeleted>(ProjectAsync);
+
+        ProjectEventAsync<UnitAddressCreated>(ProjectAsync);
+        ProjectEventAsync<UnitAddressAccessAddressIdChanged>(ProjectAsync);
+        ProjectEventAsync<UnitAddressStatusChanged>(ProjectAsync);
+        ProjectEventAsync<UnitAddressFloorNameChanged>(ProjectAsync);
+        ProjectEventAsync<UnitAddressSuiteNameChanged>(ProjectAsync);
+        ProjectEventAsync<UnitAddressDeleted>(ProjectAsync);
     }
 
     private async Task ProjectAsync(IEventEnvelope eventEnvelope)
@@ -103,7 +104,7 @@ internal sealed class AddressChangeProjection : ProjectionBase
                 HandleAccessAddressCreated(accessAddressCreated);
                 break;
             case (AccessAddressMunicipalCodeChanged accessAddressMunicipalCodeChanged):
-                HandleAccessAddressMunicipalCodeChanged(accessAddressMunicipalCodeChanged);
+                await HandleAccessAddressMunicipalCodeChanged(accessAddressMunicipalCodeChanged, eventEnvelope.EventId).ConfigureAwait(false);
                 break;
             case (AccessAddressStatusChanged accessAddressStatusChanged):
                 HandleAccessAddressStatusChanged(accessAddressStatusChanged);
@@ -157,6 +158,8 @@ internal sealed class AddressChangeProjection : ProjectionBase
 
     private void HandleAccessAddressCreated(AccessAddressCreated accessAddressCreated)
     {
+        _accessAddressIdToUnitAddressIds.Add(accessAddressCreated.Id, new());
+
         _accessAddressIdToAccessAddress.Add(
             accessAddressCreated.Id,
             new(municipalCode: accessAddressCreated.MunicipalCode,
@@ -171,9 +174,22 @@ internal sealed class AddressChangeProjection : ProjectionBase
                 postCodeId: accessAddressCreated.PostCodeId));
     }
 
-    private void HandleAccessAddressMunicipalCodeChanged(AccessAddressMunicipalCodeChanged changedEvent)
+    private async Task HandleAccessAddressMunicipalCodeChanged(AccessAddressMunicipalCodeChanged changedEvent, Guid eventId)
     {
         var oldAccessAddress = _accessAddressIdToAccessAddress[changedEvent.Id];
+
+        foreach (var unitAddressId in _accessAddressIdToUnitAddressIds[changedEvent.Id])
+        {
+            await _addressChangesChannel.Writer.WriteAsync(
+                UnitAddressChangeConvert.SuiteNameChanged(
+                    unitAddressId: unitAddressId,
+                    eventId: eventId,
+                    externalUpdated: changedEvent.ExternalUpdatedDate,
+                    suiteNameBefore: oldAccessAddress.MunicipalCode,
+                    suiteNameAfter: changedEvent.MunicipalCode))
+                .ConfigureAwait(false);
+        }
+
         _accessAddressIdToAccessAddress[changedEvent.Id] = oldAccessAddress with
         {
             MunicipalCode = changedEvent.MunicipalCode,
@@ -251,6 +267,8 @@ internal sealed class AddressChangeProjection : ProjectionBase
 
     private async Task HandleUnitAddressCreated(UnitAddressCreated changedEvent, Guid eventId)
     {
+        _accessAddressIdToUnitAddressIds[changedEvent.AccessAddressId].Add(changedEvent.Id);
+
         await _addressChangesChannel.Writer.WriteAsync(
             UnitAddressChangeConvert.Created(
                 unitAddressId: changedEvent.Id,
@@ -270,16 +288,17 @@ internal sealed class AddressChangeProjection : ProjectionBase
 
     private async Task HandleUnitAddressAccessAddressIdChanged(UnitAddressAccessAddressIdChanged changedEvent, Guid eventId)
     {
+        var oldUnitAddress = _unitAddressIdToUnitAddress[changedEvent.Id];
+
         await _addressChangesChannel.Writer.WriteAsync(
             UnitAddressChangeConvert.AccessAddressIdChanged(
                 unitAddressId: changedEvent.Id,
                 eventId: eventId,
                 externalUpdated: changedEvent.ExternalUpdatedDate,
-                accessAddressIdBefore: changedEvent.AccessAddressId,
-                accessAddressIdAfter: _unitAddressIdToUnitAddress[changedEvent.Id].AccessAddressId))
+                accessAddressIdBefore: oldUnitAddress.AccessAddressId,
+                accessAddressIdAfter: changedEvent.AccessAddressId))
             .ConfigureAwait(false);
 
-        var oldUnitAddress = _unitAddressIdToUnitAddress[changedEvent.Id];
         _unitAddressIdToUnitAddress[changedEvent.Id] = oldUnitAddress with
         {
             AccessAddressId = changedEvent.AccessAddressId,
@@ -308,16 +327,17 @@ internal sealed class AddressChangeProjection : ProjectionBase
 
     private async Task HandleUnitAddressFloorNameChanged(UnitAddressFloorNameChanged changedEvent, Guid eventId)
     {
+        var oldUnitAddress = _unitAddressIdToUnitAddress[changedEvent.Id];
+
         await _addressChangesChannel.Writer.WriteAsync(
             UnitAddressChangeConvert.FloorNameChanged(
                 unitAddressId: changedEvent.Id,
                 eventId: eventId,
                 externalUpdated: changedEvent.ExternalUpdatedDate,
-                floorNameBefore: changedEvent.FloorName,
-                floorNameAfter: _unitAddressIdToUnitAddress[changedEvent.Id].FloorName))
+                floorNameBefore: oldUnitAddress.FloorName,
+                floorNameAfter: changedEvent.FloorName))
             .ConfigureAwait(false);
 
-        var oldUnitAddress = _unitAddressIdToUnitAddress[changedEvent.Id];
         _unitAddressIdToUnitAddress[changedEvent.Id] = oldUnitAddress with
         {
             FloorName = changedEvent.FloorName,
@@ -327,16 +347,17 @@ internal sealed class AddressChangeProjection : ProjectionBase
 
     private async Task HandleUnitAddressSuiteNameChanged(UnitAddressSuiteNameChanged changedEvent, Guid eventId)
     {
+        var oldUnitAddress = _unitAddressIdToUnitAddress[changedEvent.Id];
+
         await _addressChangesChannel.Writer.WriteAsync(
             UnitAddressChangeConvert.SuiteNameChanged(
                 unitAddressId: changedEvent.Id,
                 eventId: eventId,
                 externalUpdated: changedEvent.ExternalUpdatedDate,
-                suiteNameBefore: changedEvent.SuiteName,
-                suiteNameAfter: _unitAddressIdToUnitAddress[changedEvent.Id].SuiteName))
+                suiteNameBefore: oldUnitAddress.SuiteName,
+                suiteNameAfter: changedEvent.SuiteName))
             .ConfigureAwait(false);
 
-        var oldUnitAddress = _unitAddressIdToUnitAddress[changedEvent.Id];
         _unitAddressIdToUnitAddress[changedEvent.Id] = oldUnitAddress with
         {
             SuiteName = changedEvent.SuiteName,

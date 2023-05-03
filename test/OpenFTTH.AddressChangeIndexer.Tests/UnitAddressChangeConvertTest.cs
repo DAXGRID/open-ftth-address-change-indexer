@@ -1,11 +1,11 @@
 using OpenFTTH.Core.Address;
 
-namespace OpenFTTH.AddressChangeIndexer;
+namespace OpenFTTH.AddressChangeIndexer.Tests;
 
 public sealed class UnitAddressChangeConvertTest
 {
     [Fact]
-    public void Unit_address_created_is_converted_to_address_change()
+    public void Unit_address_created_to_address_change()
     {
         var unitAddressId = Guid.Parse("55113f86-b304-4ee8-945e-086a398f34ef");
         var eventId = Guid.Parse("6665e1a1-0de2-4038-a0d0-3e155cc0d7ef");
@@ -14,7 +14,7 @@ public sealed class UnitAddressChangeConvertTest
         var expected = new AddressChange(
             unitAddressId: unitAddressId,
             eventId: eventId,
-            changeType: AddressChangeType.UnitAddressCreated,
+            changeType: AddressChangeType.AddressCreated,
             externalUpdated: externalUpdated,
             before: null,
             after: null);
@@ -39,7 +39,7 @@ public sealed class UnitAddressChangeConvertTest
         var expected = new AddressChange(
             unitAddressId: unitAddressId,
             eventId: eventId,
-            changeType: AddressChangeType.UnitAddressAccessAddressIdChanged,
+            changeType: AddressChangeType.AccessAddressIdChanged,
             externalUpdated: externalUpdated,
             before: accessAddressIdBefore.ToString(),
             after: accessAddressIdAfter.ToString());
@@ -66,7 +66,7 @@ public sealed class UnitAddressChangeConvertTest
         var expected = new AddressChange(
             unitAddressId: unitAddressId,
             eventId: eventId,
-            changeType: AddressChangeType.UnitAddressStatusChanged,
+            changeType: AddressChangeType.StatusChanged,
             externalUpdated: externalUpdated,
             before: Enum.GetName(typeof(UnitAddressStatus), statusBefore),
             after: Enum.GetName(typeof(UnitAddressStatus), statusAfter));
@@ -93,7 +93,7 @@ public sealed class UnitAddressChangeConvertTest
         var expected = new AddressChange(
             unitAddressId: unitAddressId,
             eventId: eventId,
-            changeType: AddressChangeType.UnitAddressFloorNameChanged,
+            changeType: AddressChangeType.FloorNameChanged,
             externalUpdated: externalUpdated,
             before: floorNameBefore,
             after: floorNameAfter);
@@ -120,7 +120,7 @@ public sealed class UnitAddressChangeConvertTest
         var expected = new AddressChange(
             unitAddressId: unitAddressId,
             eventId: eventId,
-            changeType: AddressChangeType.UnitAddressSuiteNameChanged,
+            changeType: AddressChangeType.SuiteNameChanged,
             externalUpdated: externalUpdated,
             before: suiteNameBefore,
             after: suiteNameAfter);
@@ -145,7 +145,7 @@ public sealed class UnitAddressChangeConvertTest
         var expected = new AddressChange(
             unitAddressId: unitAddressId,
             eventId: eventId,
-            changeType: AddressChangeType.UnitAddressDeleted,
+            changeType: AddressChangeType.AddressDeleted,
             externalUpdated: externalUpdated,
             before: null,
             after: null);
