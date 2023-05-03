@@ -84,4 +84,31 @@ public sealed class AccessAddressChangeConvertTest
 
         result.Should().BeEquivalentTo(expected);
     }
+
+    [Fact]
+    public void House_number_changed_to_address_change()
+    {
+        var unitAddressId = Guid.Parse("55113f86-b304-4ee8-945e-086a398f34ef");
+        var eventId = Guid.Parse("6665e1a1-0de2-4038-a0d0-3e155cc0d7ef");
+        var externalUpdated = DateTime.UtcNow;
+        var houseNumberBefore = "10B";
+        var houseNumberAfter = "11F";
+
+        var expected = new AddressChange(
+            unitAddressId: unitAddressId,
+            eventId: eventId,
+            changeType: AddressChangeType.AccessAddressHouseNumberChanged,
+            externalUpdated: externalUpdated,
+            before: houseNumberBefore,
+            after: houseNumberAfter);
+
+        var result = AccessAddressChangeConvert.HouseNumberChanged(
+            unitAddressId: unitAddressId,
+            eventId: eventId,
+            externalUpdated: externalUpdated,
+            houseNumberBefore: houseNumberBefore,
+            houseNumberAfter: houseNumberAfter);
+
+        result.Should().BeEquivalentTo(expected);
+    }
 }
