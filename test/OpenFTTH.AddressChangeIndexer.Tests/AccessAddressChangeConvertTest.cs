@@ -1,3 +1,5 @@
+using OpenFTTH.Core.Address;
+
 namespace OpenFTTH.AddressChangeIndexer.Tests;
 
 public sealed class AccessAddressChangeConvertTest
@@ -14,7 +16,7 @@ public sealed class AccessAddressChangeConvertTest
         var expected = new AddressChange(
                 unitAddressId: unitAddressId,
                 eventId: eventId,
-                changeType: AddressChangeType.MunicipalCodeChanged,
+                changeType: AddressChangeType.AccessAddressMunicipalCodeChanged,
                 externalUpdated: externalUpdated,
                 before: municipalCodeBefore,
                 after: municipalCodeAfter);
@@ -25,6 +27,33 @@ public sealed class AccessAddressChangeConvertTest
             externalUpdated: externalUpdated,
             municipalCodeBefore: municipalCodeBefore,
             municipalCodeAfter: municipalCodeAfter);
+
+        result.Should().BeEquivalentTo(expected);
+    }
+
+    [Fact]
+    public void Access_address_status_changed_to_address_change()
+    {
+        var unitAddressId = Guid.Parse("55113f86-b304-4ee8-945e-086a398f34ef");
+        var eventId = Guid.Parse("6665e1a1-0de2-4038-a0d0-3e155cc0d7ef");
+        var externalUpdated = DateTime.UtcNow;
+        var statusBefore = AccessAddressStatus.Pending;
+        var statusAfter = AccessAddressStatus.Active;
+
+        var expected = new AddressChange(
+                unitAddressId: unitAddressId,
+                eventId: eventId,
+                changeType: AddressChangeType.AccessAddressStatusChanged,
+                externalUpdated: externalUpdated,
+                before: "Pending",
+                after: "Active");
+
+        var result = AccessAddressChangeConvert.StatusChanged(
+            unitAddressId: unitAddressId,
+            eventId: eventId,
+            externalUpdated: externalUpdated,
+            statusBefore: statusBefore,
+            statusAfter: statusAfter);
 
         result.Should().BeEquivalentTo(expected);
     }

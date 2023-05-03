@@ -7,7 +7,8 @@ internal enum AddressChangeType
     StatusChanged,
     FloorNameChanged,
     SuiteNameChanged,
-    MunicipalCodeChanged,
+    AccessAddressMunicipalCodeChanged,
+    AccessAddressStatusChanged,
     AddressDeleted
 }
 

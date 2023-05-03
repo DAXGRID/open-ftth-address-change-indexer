@@ -107,7 +107,7 @@ internal sealed class AddressChangeProjection : ProjectionBase
                 await HandleAccessAddressMunicipalCodeChanged(accessAddressMunicipalCodeChanged, eventEnvelope.EventId).ConfigureAwait(false);
                 break;
             case (AccessAddressStatusChanged accessAddressStatusChanged):
-                HandleAccessAddressStatusChanged(accessAddressStatusChanged);
+                await HandleAccessAddressStatusChanged(accessAddressStatusChanged, eventEnvelope.EventId).ConfigureAwait(false);
                 break;
             case (AccessAddressRoadCodeChanged accessAddressRoadCodeChanged):
                 HandleAccessAddressRoadCodeChanged(accessAddressRoadCodeChanged);
@@ -181,12 +181,12 @@ internal sealed class AddressChangeProjection : ProjectionBase
         foreach (var unitAddressId in _accessAddressIdToUnitAddressIds[changedEvent.Id])
         {
             await _addressChangesChannel.Writer.WriteAsync(
-                UnitAddressChangeConvert.SuiteNameChanged(
+                AccessAddressChangeConvert.MunicipalCodeChanged(
                     unitAddressId: unitAddressId,
                     eventId: eventId,
                     externalUpdated: changedEvent.ExternalUpdatedDate,
-                    suiteNameBefore: oldAccessAddress.MunicipalCode,
-                    suiteNameAfter: changedEvent.MunicipalCode))
+                    municipalCodeBefore: oldAccessAddress.MunicipalCode,
+                    municipalCodeAfter: changedEvent.MunicipalCode))
                 .ConfigureAwait(false);
         }
 
@@ -196,9 +196,22 @@ internal sealed class AddressChangeProjection : ProjectionBase
         };
     }
 
-    private void HandleAccessAddressStatusChanged(AccessAddressStatusChanged changedEvent)
+    private async Task HandleAccessAddressStatusChanged(AccessAddressStatusChanged changedEvent, Guid eventId)
     {
         var oldAccessAddress = _accessAddressIdToAccessAddress[changedEvent.Id];
+
+        foreach (var unitAddressId in _accessAddressIdToUnitAddressIds[changedEvent.Id])
+        {
+            await _addressChangesChannel.Writer.WriteAsync(
+                AccessAddressChangeConvert.StatusChanged(
+                    unitAddressId: unitAddressId,
+                    eventId: eventId,
+                    externalUpdated: changedEvent.ExternalUpdatedDate,
+                    statusBefore: oldAccessAddress.Status,
+                    statusAfter: changedEvent.Status))
+                .ConfigureAwait(false);
+        }
+
         _accessAddressIdToAccessAddress[changedEvent.Id] = oldAccessAddress with
         {
             Status = changedEvent.Status
