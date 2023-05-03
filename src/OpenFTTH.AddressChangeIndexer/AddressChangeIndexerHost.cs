@@ -51,8 +51,8 @@ internal sealed class AddressChangeIndexerHost : BackgroundService
         var processAddressChangesTask = Task.Run(async () =>
         {
             _logger.LogInformation("Starting address change processor.");
-            var reader = addressChangesReaderCh.ReadAllAsync(stoppingToken).ConfigureAwait(false);
-            await foreach (var addressChange in reader)
+            var addressChangesReader = addressChangesReaderCh.ReadAllAsync(stoppingToken).ConfigureAwait(false);
+            await foreach (var addressChange in addressChangesReader)
             {
                 _logger.LogInformation("{AddressChange}", JsonSerializer.Serialize(addressChange));
             }
