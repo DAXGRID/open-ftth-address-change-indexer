@@ -138,4 +138,31 @@ public sealed class AccessAddressChangeConvertTest
 
         result.Should().BeEquivalentTo(expected);
     }
+
+    [Fact]
+    public void Plot_id_changed_to_address_change()
+    {
+        var unitAddressId = Guid.Parse("55113f86-b304-4ee8-945e-086a398f34ef");
+        var eventId = Guid.Parse("6665e1a1-0de2-4038-a0d0-3e155cc0d7ef");
+        var externalUpdated = DateTime.UtcNow;
+        var plotIdBefore = "1234";
+        var plotIdAfter = "5678";
+
+        var expected = new AddressChange(
+            unitAddressId: unitAddressId,
+            eventId: eventId,
+            changeType: AddressChangeType.AccessAddressPlotIdChanged,
+            externalUpdated: externalUpdated,
+            before: plotIdBefore,
+            after: plotIdAfter);
+
+        var result = AccessAddressChangeConvert.PlotIdChanged(
+            unitAddressId: unitAddressId,
+            eventId: eventId,
+            externalUpdated: externalUpdated,
+            plotIdBefore: plotIdBefore,
+            plotIdAfter: plotIdAfter);
+
+        result.Should().BeEquivalentTo(expected);
+    }
 }

@@ -122,7 +122,7 @@ internal sealed class AddressChangeProjection : ProjectionBase
                 await HandleAccessAddressSupplementaryTownNameChanged(accessAddressSupplementaryTownNameChanged, eventEnvelope.EventId).ConfigureAwait(false);
                 break;
             case (AccessAddressPlotIdChanged handleAccessAddressPlotIdChanged):
-                HandleAccessAddressPlotIdChanged(handleAccessAddressPlotIdChanged);
+                await HandleAccessAddressPlotIdChanged(handleAccessAddressPlotIdChanged, eventEnvelope.EventId).ConfigureAwait(false);
                 break;
             case (AccessAddressRoadIdChanged handleAccessAddressRoadIdChanged):
                 HandleAccessAddressRoadIdChanged(handleAccessAddressRoadIdChanged);
@@ -294,9 +294,22 @@ internal sealed class AddressChangeProjection : ProjectionBase
         };
     }
 
-    private void HandleAccessAddressPlotIdChanged(AccessAddressPlotIdChanged changedEvent)
+    private async Task HandleAccessAddressPlotIdChanged(AccessAddressPlotIdChanged changedEvent, Guid eventId)
     {
         var oldAccessAddress = _accessAddressIdToAccessAddress[changedEvent.Id];
+
+        foreach (var unitAddressId in _accessAddressIdToUnitAddressIds[changedEvent.Id])
+        {
+            await _addressChangesChannel.Writer.WriteAsync(
+                AccessAddressChangeConvert.PlotIdChanged(
+                    unitAddressId: unitAddressId,
+                    eventId: eventId,
+                    externalUpdated: changedEvent.ExternalUpdatedDate,
+                    plotIdBefore: oldAccessAddress.PlotId,
+                    plotIdAfter: changedEvent.PlotId))
+                .ConfigureAwait(false);
+        }
+
         _accessAddressIdToAccessAddress[changedEvent.Id] = oldAccessAddress with
         {
             PlotId = changedEvent.PlotId,

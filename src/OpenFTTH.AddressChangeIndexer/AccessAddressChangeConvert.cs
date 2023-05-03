@@ -84,7 +84,21 @@ internal static class AccessAddressChangeConvert
             after: supplementaryTownNameAfter);
     }
 
-    // AccessAddressPlotIdChanged
+    public static AddressChange PlotIdChanged(
+        Guid unitAddressId,
+        Guid eventId,
+        DateTime? externalUpdated,
+        string? plotIdBefore,
+        string? plotIdAfter)
+    {
+        return new AddressChange(
+            unitAddressId: unitAddressId,
+            eventId: eventId,
+            changeType: AddressChangeType.AccessAddressPlotIdChanged,
+            externalUpdated: externalUpdated,
+            before: plotIdBefore,
+            after: plotIdAfter);
+    }
 
     // AccessAddressRoadIdChanged
 
