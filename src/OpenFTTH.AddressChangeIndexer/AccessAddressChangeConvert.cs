@@ -116,5 +116,21 @@ internal static class AccessAddressChangeConvert
             after: roadIdAfter.ToString());
     }
 
-    // AccessAddressCoordinateChanged
+    public static AddressChange CoordinateChanged(
+        Guid unitAddressId,
+        Guid eventId,
+        DateTime? externalUpdated,
+        double eastCoordinateBefore,
+        double northCoordinateBefore,
+        double eastCoordinateAfter,
+        double northCoordinateAfter)
+    {
+        return new AddressChange(
+            unitAddressId: unitAddressId,
+            eventId: eventId,
+            changeType: AddressChangeType.AccessAddressCoordinateChanged,
+            externalUpdated: externalUpdated,
+            before: $"{eastCoordinateBefore},{northCoordinateBefore}",
+            after: $"{eastCoordinateAfter},{northCoordinateAfter}");
+    }
 }

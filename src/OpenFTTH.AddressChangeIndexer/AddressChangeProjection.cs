@@ -116,7 +116,7 @@ internal sealed class AddressChangeProjection : ProjectionBase
                 await HandleAccessAddressHouseNumberChanged(accessAddressHouseNumberChanged, eventEnvelope.EventId).ConfigureAwait(false);
                 break;
             case (AccessAddressCoordinateChanged accessAddressCoordinateChanged):
-                HandleAccessAddressCoordinateChanged(accessAddressCoordinateChanged);
+                await HandleAccessAddressCoordinateChanged(accessAddressCoordinateChanged, eventEnvelope.EventId).ConfigureAwait(false);
                 break;
             case (AccessAddressSupplementaryTownNameChanged accessAddressSupplementaryTownNameChanged):
                 await HandleAccessAddressSupplementaryTownNameChanged(accessAddressSupplementaryTownNameChanged, eventEnvelope.EventId).ConfigureAwait(false);
@@ -262,9 +262,24 @@ internal sealed class AddressChangeProjection : ProjectionBase
         };
     }
 
-    private void HandleAccessAddressCoordinateChanged(AccessAddressCoordinateChanged changedEvent)
+    private async Task HandleAccessAddressCoordinateChanged(AccessAddressCoordinateChanged changedEvent, Guid eventId)
     {
         var oldAccessAddress = _accessAddressIdToAccessAddress[changedEvent.Id];
+
+        foreach (var unitAddressId in _accessAddressIdToUnitAddressIds[changedEvent.Id])
+        {
+            await _addressChangesChannel.Writer.WriteAsync(
+                AccessAddressChangeConvert.CoordinateChanged(
+                    unitAddressId: unitAddressId,
+                    eventId: eventId,
+                    externalUpdated: changedEvent.ExternalUpdatedDate,
+                    eastCoordinateBefore: oldAccessAddress.EastCoordinate,
+                    northCoordinateBefore: oldAccessAddress.NorthCoordinate,
+                    eastCoordinateAfter: changedEvent.EastCoordinate,
+                    northCoordinateAfter: changedEvent.NorthCoordinate))
+                .ConfigureAwait(false);
+        }
+
         _accessAddressIdToAccessAddress[changedEvent.Id] = oldAccessAddress with
         {
             EastCoordinate = changedEvent.EastCoordinate,

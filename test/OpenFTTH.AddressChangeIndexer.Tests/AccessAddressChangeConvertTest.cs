@@ -192,4 +192,35 @@ public sealed class AccessAddressChangeConvertTest
 
         result.Should().BeEquivalentTo(expected);
     }
+
+    [Fact]
+    public void Coordinate_changed_to_address_change()
+    {
+        var unitAddressId = Guid.Parse("55113f86-b304-4ee8-945e-086a398f34ef");
+        var eventId = Guid.Parse("6665e1a1-0de2-4038-a0d0-3e155cc0d7ef");
+        var externalUpdated = DateTime.UtcNow;
+        var eastCoordinateBefore = 53.205;
+        var northCoordinateBefore = 10.203;
+        var eastCoordinateAfter = 63.206;
+        var northCoordinateAfter = 20.204;
+
+        var expected = new AddressChange(
+            unitAddressId: unitAddressId,
+            eventId: eventId,
+            changeType: AddressChangeType.AccessAddressCoordinateChanged,
+            externalUpdated: externalUpdated,
+            before: "53.205,10.203",
+            after: "63.206,20.204");
+
+        var result = AccessAddressChangeConvert.CoordinateChanged(
+            unitAddressId: unitAddressId,
+            eventId: eventId,
+            externalUpdated: externalUpdated,
+            eastCoordinateBefore: eastCoordinateBefore,
+            northCoordinateBefore: northCoordinateBefore,
+            eastCoordinateAfter: eastCoordinateAfter,
+            northCoordinateAfter: northCoordinateAfter);
+
+        result.Should().BeEquivalentTo(expected);
+    }
 }
