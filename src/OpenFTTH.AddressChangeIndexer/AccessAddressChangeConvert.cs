@@ -36,7 +36,21 @@ internal static class AccessAddressChangeConvert
             after: statusAfter.ToString());
     }
 
-    // AccessAddressRoadCodeChanged
+    public static AddressChange RoadCodeChanged(
+        Guid unitAddressId,
+        Guid eventId,
+        DateTime? externalUpdated,
+        string roadCodeBefore,
+        string roadCodeAfter)
+    {
+        return new AddressChange(
+            unitAddressId: unitAddressId,
+            eventId: eventId,
+            changeType: AddressChangeType.AccessAddressRoadCodeChanged,
+            externalUpdated: externalUpdated,
+            before: roadCodeBefore,
+            after: roadCodeAfter);
+    }
 
     // AccessAddressHouseNumberChanged
 

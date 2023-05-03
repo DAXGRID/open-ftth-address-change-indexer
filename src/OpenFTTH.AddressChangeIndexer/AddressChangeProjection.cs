@@ -110,7 +110,7 @@ internal sealed class AddressChangeProjection : ProjectionBase
                 await HandleAccessAddressStatusChanged(accessAddressStatusChanged, eventEnvelope.EventId).ConfigureAwait(false);
                 break;
             case (AccessAddressRoadCodeChanged accessAddressRoadCodeChanged):
-                HandleAccessAddressRoadCodeChanged(accessAddressRoadCodeChanged);
+                await HandleAccessAddressRoadCodeChanged(accessAddressRoadCodeChanged, eventEnvelope.EventId).ConfigureAwait(false);
                 break;
             case (AccessAddressHouseNumberChanged accessAddressHouseNumberChanged):
                 HandleAccessAddressHouseNumberChanged(accessAddressHouseNumberChanged);
@@ -218,9 +218,22 @@ internal sealed class AddressChangeProjection : ProjectionBase
         };
     }
 
-    private void HandleAccessAddressRoadCodeChanged(AccessAddressRoadCodeChanged changedEvent)
+    private async Task HandleAccessAddressRoadCodeChanged(AccessAddressRoadCodeChanged changedEvent, Guid eventId)
     {
         var oldAccessAddress = _accessAddressIdToAccessAddress[changedEvent.Id];
+
+        foreach (var unitAddressId in _accessAddressIdToUnitAddressIds[changedEvent.Id])
+        {
+            await _addressChangesChannel.Writer.WriteAsync(
+                AccessAddressChangeConvert.RoadCodeChanged(
+                    unitAddressId: unitAddressId,
+                    eventId: eventId,
+                    externalUpdated: changedEvent.ExternalUpdatedDate,
+                    roadCodeBefore: oldAccessAddress.RoadCode,
+                    roadCodeAfter: changedEvent.RoadCode))
+                .ConfigureAwait(false);
+        }
+
         _accessAddressIdToAccessAddress[changedEvent.Id] = oldAccessAddress with
         {
             RoadCode = changedEvent.RoadCode,
