@@ -68,9 +68,21 @@ internal static class AccessAddressChangeConvert
             after: houseNumberAfter);
     }
 
-    // AccessAddressHouseNumberChanged
-
-    // AccessAddressSupplementaryTownNameChanged
+    public static AddressChange SupplementaryTownNameChanged(
+        Guid unitAddressId,
+        Guid eventId,
+        DateTime? externalUpdated,
+        string? supplementaryTownNameBefore,
+        string? supplementaryTownNameAfter)
+    {
+        return new AddressChange(
+            unitAddressId: unitAddressId,
+            eventId: eventId,
+            changeType: AddressChangeType.AccessAddressSupplementaryTownNameChanged,
+            externalUpdated: externalUpdated,
+            before: supplementaryTownNameBefore,
+            after: supplementaryTownNameAfter);
+    }
 
     // AccessAddressPlotIdChanged
 

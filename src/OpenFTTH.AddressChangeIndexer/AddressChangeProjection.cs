@@ -13,7 +13,7 @@ internal sealed record AccessAddress
     public string HouseNumber { get; init; }
     public double EastCoordinate { get; init; }
     public double NorthCoordinate { get; init; }
-    public string? TownName { get; init; }
+    public string? SupplementaryTownName { get; init; }
     public string? PlotId { get; init; }
     public Guid RoadId { get; init; }
     public Guid PostCodeId { get; init; }
@@ -36,7 +36,7 @@ internal sealed record AccessAddress
         HouseNumber = houseNumber;
         EastCoordinate = eastCoordinate;
         NorthCoordinate = northCoordinate;
-        TownName = townName;
+        SupplementaryTownName = townName;
         PlotId = plotId;
         RoadId = roadId;
         PostCodeId = postCodeId;
@@ -119,7 +119,7 @@ internal sealed class AddressChangeProjection : ProjectionBase
                 HandleAccessAddressCoordinateChanged(accessAddressCoordinateChanged);
                 break;
             case (AccessAddressSupplementaryTownNameChanged accessAddressSupplementaryTownNameChanged):
-                HandleAccessAddressSupplementaryTownNameChanged(accessAddressSupplementaryTownNameChanged);
+                await HandleAccessAddressSupplementaryTownNameChanged(accessAddressSupplementaryTownNameChanged, eventEnvelope.EventId).ConfigureAwait(false);
                 break;
             case (AccessAddressPlotIdChanged handleAccessAddressPlotIdChanged):
                 HandleAccessAddressPlotIdChanged(handleAccessAddressPlotIdChanged);
@@ -272,12 +272,25 @@ internal sealed class AddressChangeProjection : ProjectionBase
         };
     }
 
-    private void HandleAccessAddressSupplementaryTownNameChanged(AccessAddressSupplementaryTownNameChanged changedEvent)
+    private async Task HandleAccessAddressSupplementaryTownNameChanged(AccessAddressSupplementaryTownNameChanged changedEvent, Guid eventId)
     {
         var oldAccessAddress = _accessAddressIdToAccessAddress[changedEvent.Id];
+
+        foreach (var unitAddressId in _accessAddressIdToUnitAddressIds[changedEvent.Id])
+        {
+            await _addressChangesChannel.Writer.WriteAsync(
+                AccessAddressChangeConvert.SupplementaryTownNameChanged(
+                    unitAddressId: unitAddressId,
+                    eventId: eventId,
+                    externalUpdated: changedEvent.ExternalUpdatedDate,
+                    supplementaryTownNameBefore: oldAccessAddress.SupplementaryTownName,
+                    supplementaryTownNameAfter: changedEvent.SupplementaryTownName))
+                .ConfigureAwait(false);
+        }
+
         _accessAddressIdToAccessAddress[changedEvent.Id] = oldAccessAddress with
         {
-            TownName = changedEvent.SupplementaryTownName,
+            SupplementaryTownName = changedEvent.SupplementaryTownName,
         };
     }
 

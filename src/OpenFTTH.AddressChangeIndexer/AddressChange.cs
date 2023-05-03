@@ -11,6 +11,7 @@ internal enum AddressChangeType
     AccessAddressStatusChanged,
     AccessAddressRoadCodeChanged,
     AccessAddressHouseNumberChanged,
+    AccessAddressSupplementaryTownNameChanged,
     AddressDeleted
 }
 
