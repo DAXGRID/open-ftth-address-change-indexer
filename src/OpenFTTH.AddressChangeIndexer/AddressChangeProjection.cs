@@ -356,6 +356,7 @@ internal sealed class AddressChangeProjection : ProjectionBase
     private void HandleAccessAddressDeleted(AccessAddressDeleted accessAddressDeleted)
     {
         _accessAddressIdToAccessAddress.Remove(accessAddressDeleted.Id);
+        _accessAddressIdToUnitAddressIds.Remove(accessAddressDeleted.Id);
     }
 
     private async Task HandleUnitAddressCreated(UnitAddressCreated changedEvent, Guid eventId)
@@ -467,6 +468,15 @@ internal sealed class AddressChangeProjection : ProjectionBase
                 externalUpdated: changedEvent.ExternalUpdatedDate))
             .ConfigureAwait(false);
 
+        var oldUnitAddress = _unitAddressIdToUnitAddress[changedEvent.Id];
+
         _unitAddressIdToUnitAddress.Remove(changedEvent.Id);
+
+        // We have to check if the access address mapping still exists, it can be deleted before the unit address.
+
+        if (_accessAddressIdToUnitAddressIds.TryGetValue(oldUnitAddress.AccessAddressId, out var unitAddressIds))
+        {
+            unitAddressIds.Remove(changedEvent.Id);
+        }
     }
 }
