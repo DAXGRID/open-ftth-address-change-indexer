@@ -472,8 +472,8 @@ internal sealed class AddressChangeProjection : ProjectionBase
 
         _unitAddressIdToUnitAddress.Remove(changedEvent.Id);
 
-        // We have to check if the access address mapping still exists, it can be deleted before the unit address.
-
+        // We have to check if the access address mapping still exists,
+        // it can be deleted before the unit address.
         if (_accessAddressIdToUnitAddressIds.TryGetValue(oldUnitAddress.AccessAddressId, out var unitAddressIds))
         {
             unitAddressIds.Remove(changedEvent.Id);
