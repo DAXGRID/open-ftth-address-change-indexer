@@ -14,7 +14,7 @@ public sealed class UnitAddressChangeConvertTest
         var expected = new AddressChange(
             unitAddressId: unitAddressId,
             eventId: eventId,
-            changeType: AddressChangeType.AddressCreated,
+            changeType: AddressChangeType.UnitAddressCreated,
             externalUpdated: externalUpdated,
             before: null,
             after: null);
@@ -39,7 +39,7 @@ public sealed class UnitAddressChangeConvertTest
         var expected = new AddressChange(
             unitAddressId: unitAddressId,
             eventId: eventId,
-            changeType: AddressChangeType.AccessAddressIdChanged,
+            changeType: AddressChangeType.UnitAddressAccessAddressIdChanged,
             externalUpdated: externalUpdated,
             before: accessAddressIdBefore.ToString(),
             after: accessAddressIdAfter.ToString());
@@ -66,7 +66,7 @@ public sealed class UnitAddressChangeConvertTest
         var expected = new AddressChange(
             unitAddressId: unitAddressId,
             eventId: eventId,
-            changeType: AddressChangeType.StatusChanged,
+            changeType: AddressChangeType.UnitAddressStatusChanged,
             externalUpdated: externalUpdated,
             before: Enum.GetName(typeof(UnitAddressStatus), statusBefore),
             after: Enum.GetName(typeof(UnitAddressStatus), statusAfter));
@@ -93,7 +93,7 @@ public sealed class UnitAddressChangeConvertTest
         var expected = new AddressChange(
             unitAddressId: unitAddressId,
             eventId: eventId,
-            changeType: AddressChangeType.FloorNameChanged,
+            changeType: AddressChangeType.UnitAddressFloorNameChanged,
             externalUpdated: externalUpdated,
             before: floorNameBefore,
             after: floorNameAfter);
@@ -120,7 +120,7 @@ public sealed class UnitAddressChangeConvertTest
         var expected = new AddressChange(
             unitAddressId: unitAddressId,
             eventId: eventId,
-            changeType: AddressChangeType.SuiteNameChanged,
+            changeType: AddressChangeType.UnitAddressSuiteNameChanged,
             externalUpdated: externalUpdated,
             before: suiteNameBefore,
             after: suiteNameAfter);
@@ -145,7 +145,7 @@ public sealed class UnitAddressChangeConvertTest
         var expected = new AddressChange(
             unitAddressId: unitAddressId,
             eventId: eventId,
-            changeType: AddressChangeType.AddressDeleted,
+            changeType: AddressChangeType.UnitAddressDeleted,
             externalUpdated: externalUpdated,
             before: null,
             after: null);

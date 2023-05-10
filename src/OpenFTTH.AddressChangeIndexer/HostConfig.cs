@@ -34,6 +34,7 @@ internal static class HostConfig
         {
             services.AddHostedService<AddressChangeIndexerHost>();
             services.AddSingleton<Setting>(setting);
+            services.AddSingleton<IDatabaseAddressChangeIndex, PostgresDatabaseAddressChangeIndex>();
 
             services.AddSingleton<IEventStore>(
                 e =>

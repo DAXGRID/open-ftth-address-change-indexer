@@ -407,8 +407,8 @@ internal sealed class AddressChangeProjection : ProjectionBase
                 unitAddressId: changedEvent.Id,
                 eventId: eventId,
                 externalUpdated: changedEvent.ExternalUpdatedDate,
-                statusBefore: changedEvent.Status,
-                statusAfter: _unitAddressIdToUnitAddress[changedEvent.Id].Status))
+                statusBefore: _unitAddressIdToUnitAddress[changedEvent.Id].Status,
+                statusAfter: changedEvent.Status))
             .ConfigureAwait(false);
 
         var oldUnitAddress = _unitAddressIdToUnitAddress[changedEvent.Id];
