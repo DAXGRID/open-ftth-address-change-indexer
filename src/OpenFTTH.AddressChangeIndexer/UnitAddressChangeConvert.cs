@@ -8,7 +8,8 @@ internal static class UnitAddressChangeConvert
         Guid unitAddressId,
         Guid eventId,
         DateTime? externalUpdated,
-        long sequenceNumber)
+        long sequenceNumber,
+        DateTime eventTimestamp)
     {
         return new AddressChange(
             unitAddressId: unitAddressId,
@@ -16,6 +17,7 @@ internal static class UnitAddressChangeConvert
             changeType: AddressChangeType.UnitAddressCreated,
             externalUpdated: externalUpdated,
             sequenceNumber: sequenceNumber,
+            eventTimestamp: eventTimestamp,
             before: null,
             after: null);
     }
@@ -25,6 +27,7 @@ internal static class UnitAddressChangeConvert
         Guid eventId,
         DateTime? externalUpdated,
         long sequenceNumber,
+        DateTime eventTimestamp,
         Guid accessAddressIdBefore,
         Guid accessAddressIdAfter)
     {
@@ -34,6 +37,7 @@ internal static class UnitAddressChangeConvert
             changeType: AddressChangeType.UnitAddressAccessAddressIdChanged,
             externalUpdated: externalUpdated,
             sequenceNumber: sequenceNumber,
+            eventTimestamp: eventTimestamp,
             before: accessAddressIdBefore.ToString(),
             after: accessAddressIdAfter.ToString());
     }
@@ -43,6 +47,7 @@ internal static class UnitAddressChangeConvert
         Guid eventId,
         DateTime? externalUpdated,
         long sequenceNumber,
+        DateTime eventTimestamp,
         UnitAddressStatus statusBefore,
         UnitAddressStatus statusAfter)
     {
@@ -52,6 +57,7 @@ internal static class UnitAddressChangeConvert
             changeType: AddressChangeType.UnitAddressStatusChanged,
             externalUpdated: externalUpdated,
             sequenceNumber: sequenceNumber,
+            eventTimestamp: eventTimestamp,
             before: Enum.GetName(typeof(UnitAddressStatus), statusBefore),
             after: Enum.GetName(typeof(UnitAddressStatus), statusAfter));
     }
@@ -61,6 +67,7 @@ internal static class UnitAddressChangeConvert
         Guid eventId,
         DateTime? externalUpdated,
         long sequenceNumber,
+        DateTime eventTimestamp,
         string? floorNameBefore,
         string? floorNameAfter)
     {
@@ -70,6 +77,7 @@ internal static class UnitAddressChangeConvert
             changeType: AddressChangeType.UnitAddressFloorNameChanged,
             externalUpdated: externalUpdated,
             sequenceNumber: sequenceNumber,
+            eventTimestamp: eventTimestamp,
             before: floorNameBefore,
             after: floorNameAfter);
     }
@@ -79,6 +87,7 @@ internal static class UnitAddressChangeConvert
         Guid eventId,
         DateTime? externalUpdated,
         long sequenceNumber,
+        DateTime eventTimestamp,
         string? suiteNameBefore,
         string? suiteNameAfter)
     {
@@ -88,6 +97,7 @@ internal static class UnitAddressChangeConvert
             changeType: AddressChangeType.UnitAddressSuiteNameChanged,
             externalUpdated: externalUpdated,
             sequenceNumber: sequenceNumber,
+            eventTimestamp: eventTimestamp,
             before: suiteNameBefore,
             after: suiteNameAfter);
     }
@@ -96,7 +106,8 @@ internal static class UnitAddressChangeConvert
         Guid unitAddressId,
         Guid eventId,
         DateTime? externalUpdated,
-        long sequenceNumber)
+        long sequenceNumber,
+        DateTime eventTimestamp)
     {
         return new AddressChange(
             unitAddressId: unitAddressId,
@@ -104,6 +115,7 @@ internal static class UnitAddressChangeConvert
             changeType: AddressChangeType.UnitAddressDeleted,
             externalUpdated: externalUpdated,
             sequenceNumber: sequenceNumber,
+            eventTimestamp: eventTimestamp,
             before: null,
             after: null);
     }

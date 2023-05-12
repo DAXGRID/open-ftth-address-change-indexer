@@ -11,6 +11,7 @@ public sealed class UnitAddressChangeConvertTest
         var eventId = Guid.Parse("6665e1a1-0de2-4038-a0d0-3e155cc0d7ef");
         var externalUpdated = DateTime.UtcNow;
         var sequenceNumber = 50L;
+        var eventTimestamp = DateTime.UtcNow;
 
         var expected = new AddressChange(
             unitAddressId: unitAddressId,
@@ -18,6 +19,7 @@ public sealed class UnitAddressChangeConvertTest
             changeType: AddressChangeType.UnitAddressCreated,
             externalUpdated: externalUpdated,
             sequenceNumber: sequenceNumber,
+            eventTimestamp: eventTimestamp,
             before: null,
             after: null);
 
@@ -25,7 +27,8 @@ public sealed class UnitAddressChangeConvertTest
             unitAddressId: unitAddressId,
             eventId: eventId,
             externalUpdated: externalUpdated,
-            sequenceNumber: sequenceNumber);
+            sequenceNumber: sequenceNumber,
+            eventTimestamp: eventTimestamp);
 
         result.Should().BeEquivalentTo(expected);
     }
@@ -39,6 +42,7 @@ public sealed class UnitAddressChangeConvertTest
         var accessAddressIdBefore = Guid.Parse("01aed8c7-28b5-4e77-ac6b-80dd84df921f");
         var accessAddressIdAfter = Guid.Parse("6a1b141c-c2d9-4eb9-bd6f-8c73171a92ab");
         var sequenceNumber = 50L;
+        var eventTimestamp = DateTime.UtcNow;
 
         var expected = new AddressChange(
             unitAddressId: unitAddressId,
@@ -46,6 +50,7 @@ public sealed class UnitAddressChangeConvertTest
             changeType: AddressChangeType.UnitAddressAccessAddressIdChanged,
             externalUpdated: externalUpdated,
             sequenceNumber: sequenceNumber,
+            eventTimestamp: eventTimestamp,
             before: accessAddressIdBefore.ToString(),
             after: accessAddressIdAfter.ToString());
 
@@ -54,6 +59,7 @@ public sealed class UnitAddressChangeConvertTest
             eventId: eventId,
             externalUpdated: externalUpdated,
             sequenceNumber: sequenceNumber,
+            eventTimestamp: eventTimestamp,
             accessAddressIdBefore: accessAddressIdBefore,
             accessAddressIdAfter: accessAddressIdAfter);
 
@@ -69,6 +75,7 @@ public sealed class UnitAddressChangeConvertTest
         var statusBefore = UnitAddressStatus.Pending;
         var statusAfter = UnitAddressStatus.Active;
         var sequenceNumber = 50L;
+        var eventTimestamp = DateTime.UtcNow;
 
         var expected = new AddressChange(
             unitAddressId: unitAddressId,
@@ -76,6 +83,7 @@ public sealed class UnitAddressChangeConvertTest
             changeType: AddressChangeType.UnitAddressStatusChanged,
             externalUpdated: externalUpdated,
             sequenceNumber: sequenceNumber,
+            eventTimestamp: eventTimestamp,
             before: Enum.GetName(typeof(UnitAddressStatus), statusBefore),
             after: Enum.GetName(typeof(UnitAddressStatus), statusAfter));
 
@@ -84,6 +92,7 @@ public sealed class UnitAddressChangeConvertTest
             eventId: eventId,
             externalUpdated: externalUpdated,
             sequenceNumber: sequenceNumber,
+            eventTimestamp: eventTimestamp,
             statusBefore: statusBefore,
             statusAfter: statusAfter);
 
@@ -99,6 +108,7 @@ public sealed class UnitAddressChangeConvertTest
         var floorNameBefore = "2b";
         var floorNameAfter = "3b";
         var sequenceNumber = 50L;
+        var eventTimestamp = DateTime.UtcNow;
 
         var expected = new AddressChange(
             unitAddressId: unitAddressId,
@@ -106,6 +116,7 @@ public sealed class UnitAddressChangeConvertTest
             changeType: AddressChangeType.UnitAddressFloorNameChanged,
             externalUpdated: externalUpdated,
             sequenceNumber: sequenceNumber,
+            eventTimestamp: eventTimestamp,
             before: floorNameBefore,
             after: floorNameAfter);
 
@@ -114,6 +125,7 @@ public sealed class UnitAddressChangeConvertTest
             eventId: eventId,
             externalUpdated: externalUpdated,
             sequenceNumber: sequenceNumber,
+            eventTimestamp: eventTimestamp,
             floorNameBefore: floorNameBefore,
             floorNameAfter: floorNameAfter);
 
@@ -129,6 +141,7 @@ public sealed class UnitAddressChangeConvertTest
         string? suiteNameBefore = null;
         var suiteNameAfter = "mf";
         var sequenceNumber = 50L;
+        var eventTimestamp = DateTime.UtcNow;
 
         var expected = new AddressChange(
             unitAddressId: unitAddressId,
@@ -136,6 +149,7 @@ public sealed class UnitAddressChangeConvertTest
             changeType: AddressChangeType.UnitAddressSuiteNameChanged,
             externalUpdated: externalUpdated,
             sequenceNumber: sequenceNumber,
+            eventTimestamp: eventTimestamp,
             before: suiteNameBefore,
             after: suiteNameAfter);
 
@@ -144,6 +158,7 @@ public sealed class UnitAddressChangeConvertTest
             eventId: eventId,
             externalUpdated: externalUpdated,
             sequenceNumber: sequenceNumber,
+            eventTimestamp: eventTimestamp,
             suiteNameBefore: suiteNameBefore,
             suiteNameAfter: suiteNameAfter);
 
@@ -157,6 +172,7 @@ public sealed class UnitAddressChangeConvertTest
         var eventId = Guid.Parse("6665e1a1-0de2-4038-a0d0-3e155cc0d7ef");
         var externalUpdated = DateTime.UtcNow;
         var sequenceNumber = 50L;
+        var eventTimestamp = DateTime.UtcNow;
 
         var expected = new AddressChange(
             unitAddressId: unitAddressId,
@@ -164,6 +180,7 @@ public sealed class UnitAddressChangeConvertTest
             changeType: AddressChangeType.UnitAddressDeleted,
             externalUpdated: externalUpdated,
             sequenceNumber: sequenceNumber,
+            eventTimestamp: eventTimestamp,
             before: null,
             after: null);
 
@@ -171,7 +188,8 @@ public sealed class UnitAddressChangeConvertTest
             unitAddressId: unitAddressId,
             eventId: eventId,
             externalUpdated: externalUpdated,
-            sequenceNumber: sequenceNumber);
+            sequenceNumber: sequenceNumber,
+            eventTimestamp: eventTimestamp);
 
         result.Should().BeEquivalentTo(expected);
     }

@@ -13,6 +13,7 @@ public sealed class AccessAddressChangeConvertTest
         var municipalCodeBefore = "AD12";
         var municipalCodeAfter = "DF12";
         var sequenceNumber = 50L;
+        var eventTimestamp = DateTime.UtcNow;
 
         var expected = new AddressChange(
                 unitAddressId: unitAddressId,
@@ -20,6 +21,7 @@ public sealed class AccessAddressChangeConvertTest
                 changeType: AddressChangeType.AccessAddressMunicipalCodeChanged,
                 externalUpdated: externalUpdated,
                 sequenceNumber: sequenceNumber,
+                eventTimestamp: eventTimestamp,
                 before: municipalCodeBefore,
                 after: municipalCodeAfter);
 
@@ -28,6 +30,7 @@ public sealed class AccessAddressChangeConvertTest
             eventId: eventId,
             externalUpdated: externalUpdated,
             sequenceNumber: sequenceNumber,
+            eventTimestamp: eventTimestamp,
             municipalCodeBefore: municipalCodeBefore,
             municipalCodeAfter: municipalCodeAfter);
 
@@ -43,6 +46,7 @@ public sealed class AccessAddressChangeConvertTest
         var statusBefore = AccessAddressStatus.Pending;
         var statusAfter = AccessAddressStatus.Active;
         var sequenceNumber = 50L;
+        var eventTimestamp = DateTime.UtcNow;
 
         var expected = new AddressChange(
                 unitAddressId: unitAddressId,
@@ -50,6 +54,7 @@ public sealed class AccessAddressChangeConvertTest
                 changeType: AddressChangeType.AccessAddressStatusChanged,
                 externalUpdated: externalUpdated,
                 sequenceNumber: sequenceNumber,
+                eventTimestamp: eventTimestamp,
                 before: "Pending",
                 after: "Active");
 
@@ -58,6 +63,7 @@ public sealed class AccessAddressChangeConvertTest
             eventId: eventId,
             externalUpdated: externalUpdated,
             sequenceNumber: sequenceNumber,
+            eventTimestamp: eventTimestamp,
             statusBefore: statusBefore,
             statusAfter: statusAfter);
 
@@ -73,6 +79,7 @@ public sealed class AccessAddressChangeConvertTest
         var roadCodeBefore = "0101";
         var roadCodeAfter = "0102";
         var sequenceNumber = 50L;
+        var eventTimestamp = DateTime.UtcNow;
 
         var expected = new AddressChange(
             unitAddressId: unitAddressId,
@@ -80,6 +87,7 @@ public sealed class AccessAddressChangeConvertTest
             changeType: AddressChangeType.AccessAddressRoadCodeChanged,
             externalUpdated: externalUpdated,
             sequenceNumber: sequenceNumber,
+            eventTimestamp: eventTimestamp,
             before: roadCodeBefore,
             after: roadCodeAfter);
 
@@ -88,6 +96,7 @@ public sealed class AccessAddressChangeConvertTest
             eventId: eventId,
             externalUpdated: externalUpdated,
             sequenceNumber: sequenceNumber,
+            eventTimestamp: eventTimestamp,
             roadCodeBefore: roadCodeBefore,
             roadCodeAfter: roadCodeAfter);
 
@@ -103,6 +112,7 @@ public sealed class AccessAddressChangeConvertTest
         var houseNumberBefore = "10B";
         var houseNumberAfter = "11F";
         var sequenceNumber = 50L;
+        var eventTimestamp = DateTime.UtcNow;
 
         var expected = new AddressChange(
             unitAddressId: unitAddressId,
@@ -110,6 +120,7 @@ public sealed class AccessAddressChangeConvertTest
             changeType: AddressChangeType.AccessAddressHouseNumberChanged,
             externalUpdated: externalUpdated,
             sequenceNumber: sequenceNumber,
+            eventTimestamp: eventTimestamp,
             before: houseNumberBefore,
             after: houseNumberAfter);
 
@@ -118,6 +129,7 @@ public sealed class AccessAddressChangeConvertTest
             eventId: eventId,
             externalUpdated: externalUpdated,
             sequenceNumber: sequenceNumber,
+            eventTimestamp: eventTimestamp,
             houseNumberBefore: houseNumberBefore,
             houseNumberAfter: houseNumberAfter);
 
@@ -133,6 +145,7 @@ public sealed class AccessAddressChangeConvertTest
         var supplementaryTownNameBefore = "Old town name";
         var supplementaryTownNameAfter = "New town name";
         var sequenceNumber = 50L;
+        var eventTimestamp = DateTime.UtcNow;
 
         var expected = new AddressChange(
             unitAddressId: unitAddressId,
@@ -140,6 +153,7 @@ public sealed class AccessAddressChangeConvertTest
             changeType: AddressChangeType.AccessAddressSupplementaryTownNameChanged,
             externalUpdated: externalUpdated,
             sequenceNumber: sequenceNumber,
+            eventTimestamp: eventTimestamp,
             before: supplementaryTownNameBefore,
             after: supplementaryTownNameAfter);
 
@@ -148,6 +162,7 @@ public sealed class AccessAddressChangeConvertTest
             eventId: eventId,
             externalUpdated: externalUpdated,
             sequenceNumber: sequenceNumber,
+            eventTimestamp: eventTimestamp,
             supplementaryTownNameBefore: supplementaryTownNameBefore,
             supplementaryTownNameAfter: supplementaryTownNameAfter);
 
@@ -163,6 +178,7 @@ public sealed class AccessAddressChangeConvertTest
         var plotIdBefore = "1234";
         var plotIdAfter = "5678";
         var sequenceNumber = 50L;
+        var eventTimestamp = DateTime.UtcNow;
 
         var expected = new AddressChange(
             unitAddressId: unitAddressId,
@@ -170,6 +186,7 @@ public sealed class AccessAddressChangeConvertTest
             changeType: AddressChangeType.AccessAddressPlotIdChanged,
             externalUpdated: externalUpdated,
             sequenceNumber: sequenceNumber,
+            eventTimestamp: eventTimestamp,
             before: plotIdBefore,
             after: plotIdAfter);
 
@@ -178,6 +195,7 @@ public sealed class AccessAddressChangeConvertTest
             eventId: eventId,
             externalUpdated: externalUpdated,
             sequenceNumber: sequenceNumber,
+            eventTimestamp: eventTimestamp,
             plotIdBefore: plotIdBefore,
             plotIdAfter: plotIdAfter);
 
@@ -193,6 +211,7 @@ public sealed class AccessAddressChangeConvertTest
         var roadIdBefore = Guid.Parse("efcfe55a-e2c3-4bd2-ae08-44327787da54");
         var roadIdAfter = Guid.Parse("fce4562c-1b64-4bbb-a02f-7e8e966a5ea0");
         var sequenceNumber = 50L;
+        var eventTimestamp = DateTime.UtcNow;
 
         var expected = new AddressChange(
             unitAddressId: unitAddressId,
@@ -200,6 +219,7 @@ public sealed class AccessAddressChangeConvertTest
             changeType: AddressChangeType.AccessAddressRoadIdChanged,
             externalUpdated: externalUpdated,
             sequenceNumber: sequenceNumber,
+            eventTimestamp: eventTimestamp,
             before: roadIdBefore.ToString(),
             after: roadIdAfter.ToString());
 
@@ -208,6 +228,7 @@ public sealed class AccessAddressChangeConvertTest
             eventId: eventId,
             externalUpdated: externalUpdated,
             sequenceNumber: sequenceNumber,
+            eventTimestamp: eventTimestamp,
             roadIdBefore: roadIdBefore,
             roadIdAfter: roadIdAfter);
 
@@ -225,6 +246,7 @@ public sealed class AccessAddressChangeConvertTest
         var eastCoordinateAfter = 63.206;
         var northCoordinateAfter = 20.204;
         var sequenceNumber = 50L;
+        var eventTimestamp = DateTime.UtcNow;
 
         var expected = new AddressChange(
             unitAddressId: unitAddressId,
@@ -232,6 +254,7 @@ public sealed class AccessAddressChangeConvertTest
             changeType: AddressChangeType.AccessAddressCoordinateChanged,
             externalUpdated: externalUpdated,
             sequenceNumber: sequenceNumber,
+            eventTimestamp: eventTimestamp,
             before: "53.205,10.203",
             after: "63.206,20.204");
 
@@ -240,6 +263,7 @@ public sealed class AccessAddressChangeConvertTest
             eventId: eventId,
             externalUpdated: externalUpdated,
             sequenceNumber: sequenceNumber,
+            eventTimestamp: eventTimestamp,
             eastCoordinateBefore: eastCoordinateBefore,
             northCoordinateBefore: northCoordinateBefore,
             eastCoordinateAfter: eastCoordinateAfter,
