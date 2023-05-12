@@ -44,7 +44,7 @@ internal sealed class AddressChangeIndexerHost : BackgroundService
                 .ConfigureAwait(false);
 
             _logger.LogInformation(
-                "Memory after dehydration {MibiBytes}.",
+                "Finished dehydration, memory after dehydration {MibiBytes}.",
                 Process.GetCurrentProcess().PrivateMemorySize64 / 1024 / 1024);
 
             while (!stoppingToken.IsCancellationRequested)
@@ -122,6 +122,10 @@ internal sealed class AddressChangeIndexerHost : BackgroundService
             // Do nothing we do not care when operation is canceled,
             // it will always be because of a shutdown request from OS.
             _logger.LogInformation("OperationCanceledException, requested shutdown...");
+        }
+        catch (AggregateException)
+        {
+            throw;
         }
     }
 }

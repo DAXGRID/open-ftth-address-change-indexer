@@ -24,6 +24,7 @@ internal sealed record AddressChange
     public Guid EventId { get; init; }
     public AddressChangeType ChangeType { get; init; }
     public DateTime? ExternalUpdated { get; init; }
+    public long SequenceNumber { get; init; }
     public string? Before { get; init; }
     public string? After { get; init; }
 
@@ -32,6 +33,7 @@ internal sealed record AddressChange
         Guid eventId,
         AddressChangeType changeType,
         DateTime? externalUpdated,
+        long sequenceNumber,
         string? before,
         string? after)
     {
@@ -39,6 +41,7 @@ internal sealed record AddressChange
         EventId = eventId;
         ChangeType = changeType;
         ExternalUpdated = externalUpdated;
+        SequenceNumber = sequenceNumber;
         Before = before;
         After = after;
     }

@@ -10,19 +10,22 @@ public sealed class UnitAddressChangeConvertTest
         var unitAddressId = Guid.Parse("55113f86-b304-4ee8-945e-086a398f34ef");
         var eventId = Guid.Parse("6665e1a1-0de2-4038-a0d0-3e155cc0d7ef");
         var externalUpdated = DateTime.UtcNow;
+        var sequenceNumber = 50L;
 
         var expected = new AddressChange(
             unitAddressId: unitAddressId,
             eventId: eventId,
             changeType: AddressChangeType.UnitAddressCreated,
             externalUpdated: externalUpdated,
+            sequenceNumber: sequenceNumber,
             before: null,
             after: null);
 
         var result = UnitAddressChangeConvert.Created(
             unitAddressId: unitAddressId,
             eventId: eventId,
-            externalUpdated: externalUpdated);
+            externalUpdated: externalUpdated,
+            sequenceNumber: sequenceNumber);
 
         result.Should().BeEquivalentTo(expected);
     }
@@ -35,12 +38,14 @@ public sealed class UnitAddressChangeConvertTest
         var externalUpdated = DateTime.UtcNow;
         var accessAddressIdBefore = Guid.Parse("01aed8c7-28b5-4e77-ac6b-80dd84df921f");
         var accessAddressIdAfter = Guid.Parse("6a1b141c-c2d9-4eb9-bd6f-8c73171a92ab");
+        var sequenceNumber = 50L;
 
         var expected = new AddressChange(
             unitAddressId: unitAddressId,
             eventId: eventId,
             changeType: AddressChangeType.UnitAddressAccessAddressIdChanged,
             externalUpdated: externalUpdated,
+            sequenceNumber: sequenceNumber,
             before: accessAddressIdBefore.ToString(),
             after: accessAddressIdAfter.ToString());
 
@@ -48,6 +53,7 @@ public sealed class UnitAddressChangeConvertTest
             unitAddressId: unitAddressId,
             eventId: eventId,
             externalUpdated: externalUpdated,
+            sequenceNumber: sequenceNumber,
             accessAddressIdBefore: accessAddressIdBefore,
             accessAddressIdAfter: accessAddressIdAfter);
 
@@ -62,12 +68,14 @@ public sealed class UnitAddressChangeConvertTest
         var externalUpdated = DateTime.UtcNow;
         var statusBefore = UnitAddressStatus.Pending;
         var statusAfter = UnitAddressStatus.Active;
+        var sequenceNumber = 50L;
 
         var expected = new AddressChange(
             unitAddressId: unitAddressId,
             eventId: eventId,
             changeType: AddressChangeType.UnitAddressStatusChanged,
             externalUpdated: externalUpdated,
+            sequenceNumber: sequenceNumber,
             before: Enum.GetName(typeof(UnitAddressStatus), statusBefore),
             after: Enum.GetName(typeof(UnitAddressStatus), statusAfter));
 
@@ -75,6 +83,7 @@ public sealed class UnitAddressChangeConvertTest
             unitAddressId: unitAddressId,
             eventId: eventId,
             externalUpdated: externalUpdated,
+            sequenceNumber: sequenceNumber,
             statusBefore: statusBefore,
             statusAfter: statusAfter);
 
@@ -89,12 +98,14 @@ public sealed class UnitAddressChangeConvertTest
         var externalUpdated = DateTime.UtcNow;
         var floorNameBefore = "2b";
         var floorNameAfter = "3b";
+        var sequenceNumber = 50L;
 
         var expected = new AddressChange(
             unitAddressId: unitAddressId,
             eventId: eventId,
             changeType: AddressChangeType.UnitAddressFloorNameChanged,
             externalUpdated: externalUpdated,
+            sequenceNumber: sequenceNumber,
             before: floorNameBefore,
             after: floorNameAfter);
 
@@ -102,6 +113,7 @@ public sealed class UnitAddressChangeConvertTest
             unitAddressId: unitAddressId,
             eventId: eventId,
             externalUpdated: externalUpdated,
+            sequenceNumber: sequenceNumber,
             floorNameBefore: floorNameBefore,
             floorNameAfter: floorNameAfter);
 
@@ -116,12 +128,14 @@ public sealed class UnitAddressChangeConvertTest
         var externalUpdated = DateTime.UtcNow;
         string? suiteNameBefore = null;
         var suiteNameAfter = "mf";
+        var sequenceNumber = 50L;
 
         var expected = new AddressChange(
             unitAddressId: unitAddressId,
             eventId: eventId,
             changeType: AddressChangeType.UnitAddressSuiteNameChanged,
             externalUpdated: externalUpdated,
+            sequenceNumber: sequenceNumber,
             before: suiteNameBefore,
             after: suiteNameAfter);
 
@@ -129,6 +143,7 @@ public sealed class UnitAddressChangeConvertTest
             unitAddressId: unitAddressId,
             eventId: eventId,
             externalUpdated: externalUpdated,
+            sequenceNumber: sequenceNumber,
             suiteNameBefore: suiteNameBefore,
             suiteNameAfter: suiteNameAfter);
 
@@ -141,19 +156,22 @@ public sealed class UnitAddressChangeConvertTest
         var unitAddressId = Guid.Parse("55113f86-b304-4ee8-945e-086a398f34ef");
         var eventId = Guid.Parse("6665e1a1-0de2-4038-a0d0-3e155cc0d7ef");
         var externalUpdated = DateTime.UtcNow;
+        var sequenceNumber = 50L;
 
         var expected = new AddressChange(
             unitAddressId: unitAddressId,
             eventId: eventId,
             changeType: AddressChangeType.UnitAddressDeleted,
             externalUpdated: externalUpdated,
+            sequenceNumber: sequenceNumber,
             before: null,
             after: null);
 
         var result = UnitAddressChangeConvert.Deleted(
             unitAddressId: unitAddressId,
             eventId: eventId,
-            externalUpdated: externalUpdated);
+            externalUpdated: externalUpdated,
+            sequenceNumber: sequenceNumber);
 
         result.Should().BeEquivalentTo(expected);
     }

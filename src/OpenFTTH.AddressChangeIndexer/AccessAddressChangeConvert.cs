@@ -8,6 +8,7 @@ internal static class AccessAddressChangeConvert
         Guid unitAddressId,
         Guid eventId,
         DateTime? externalUpdated,
+        long sequenceNumber,
         string? municipalCodeBefore,
         string? municipalCodeAfter)
     {
@@ -16,6 +17,7 @@ internal static class AccessAddressChangeConvert
             eventId: eventId,
             changeType: AddressChangeType.AccessAddressMunicipalCodeChanged,
             externalUpdated: externalUpdated,
+            sequenceNumber: sequenceNumber,
             before: municipalCodeBefore,
             after: municipalCodeAfter);
     }
@@ -24,6 +26,7 @@ internal static class AccessAddressChangeConvert
         Guid unitAddressId,
         Guid eventId,
         DateTime? externalUpdated,
+        long sequenceNumber,
         AccessAddressStatus statusBefore,
         AccessAddressStatus statusAfter)
     {
@@ -32,6 +35,7 @@ internal static class AccessAddressChangeConvert
             eventId: eventId,
             changeType: AddressChangeType.AccessAddressStatusChanged,
             externalUpdated: externalUpdated,
+            sequenceNumber: sequenceNumber,
             before: statusBefore.ToString(),
             after: statusAfter.ToString());
     }
@@ -40,6 +44,7 @@ internal static class AccessAddressChangeConvert
         Guid unitAddressId,
         Guid eventId,
         DateTime? externalUpdated,
+        long sequenceNumber,
         string roadCodeBefore,
         string roadCodeAfter)
     {
@@ -48,6 +53,7 @@ internal static class AccessAddressChangeConvert
             eventId: eventId,
             changeType: AddressChangeType.AccessAddressRoadCodeChanged,
             externalUpdated: externalUpdated,
+            sequenceNumber: sequenceNumber,
             before: roadCodeBefore,
             after: roadCodeAfter);
     }
@@ -56,6 +62,7 @@ internal static class AccessAddressChangeConvert
         Guid unitAddressId,
         Guid eventId,
         DateTime? externalUpdated,
+        long sequenceNumber,
         string houseNumberBefore,
         string houseNumberAfter)
     {
@@ -64,6 +71,7 @@ internal static class AccessAddressChangeConvert
             eventId: eventId,
             changeType: AddressChangeType.AccessAddressHouseNumberChanged,
             externalUpdated: externalUpdated,
+            sequenceNumber: sequenceNumber,
             before: houseNumberBefore,
             after: houseNumberAfter);
     }
@@ -72,6 +80,7 @@ internal static class AccessAddressChangeConvert
         Guid unitAddressId,
         Guid eventId,
         DateTime? externalUpdated,
+        long sequenceNumber,
         string? supplementaryTownNameBefore,
         string? supplementaryTownNameAfter)
     {
@@ -80,6 +89,7 @@ internal static class AccessAddressChangeConvert
             eventId: eventId,
             changeType: AddressChangeType.AccessAddressSupplementaryTownNameChanged,
             externalUpdated: externalUpdated,
+            sequenceNumber: sequenceNumber,
             before: supplementaryTownNameBefore,
             after: supplementaryTownNameAfter);
     }
@@ -88,6 +98,7 @@ internal static class AccessAddressChangeConvert
         Guid unitAddressId,
         Guid eventId,
         DateTime? externalUpdated,
+        long sequenceNumber,
         string? plotIdBefore,
         string? plotIdAfter)
     {
@@ -96,6 +107,7 @@ internal static class AccessAddressChangeConvert
             eventId: eventId,
             changeType: AddressChangeType.AccessAddressPlotIdChanged,
             externalUpdated: externalUpdated,
+            sequenceNumber: sequenceNumber,
             before: plotIdBefore,
             after: plotIdAfter);
     }
@@ -104,6 +116,7 @@ internal static class AccessAddressChangeConvert
         Guid unitAddressId,
         Guid eventId,
         DateTime? externalUpdated,
+        long sequenceNumber,
         Guid roadIdBefore,
         Guid roadIdAfter)
     {
@@ -112,6 +125,7 @@ internal static class AccessAddressChangeConvert
             eventId: eventId,
             changeType: AddressChangeType.AccessAddressRoadIdChanged,
             externalUpdated: externalUpdated,
+            sequenceNumber: sequenceNumber,
             before: roadIdBefore.ToString(),
             after: roadIdAfter.ToString());
     }
@@ -120,6 +134,7 @@ internal static class AccessAddressChangeConvert
         Guid unitAddressId,
         Guid eventId,
         DateTime? externalUpdated,
+        long sequenceNumber,
         double eastCoordinateBefore,
         double northCoordinateBefore,
         double eastCoordinateAfter,
@@ -130,6 +145,7 @@ internal static class AccessAddressChangeConvert
             eventId: eventId,
             changeType: AddressChangeType.AccessAddressCoordinateChanged,
             externalUpdated: externalUpdated,
+            sequenceNumber: sequenceNumber,
             before: $"{eastCoordinateBefore},{northCoordinateBefore}",
             after: $"{eastCoordinateAfter},{northCoordinateAfter}");
     }

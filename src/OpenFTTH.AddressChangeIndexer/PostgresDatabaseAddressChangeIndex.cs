@@ -57,7 +57,7 @@ COPY location.address_changes(
                 writer.WriteRow(
                     addressChange.UnitAddressId,
                     addressChange.EventId,
-                    0L, // Sequence number TODO set to real value
+                    addressChange.SequenceNumber,
                     addressChange.ChangeType.ToString(),
                     addressChange.ExternalUpdated is not null ? addressChange.ExternalUpdated : DBNull.Value,
                     addressChange.Before is not null ? addressChange.Before : DBNull.Value,

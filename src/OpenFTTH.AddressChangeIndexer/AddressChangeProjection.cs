@@ -104,50 +104,50 @@ internal sealed class AddressChangeProjection : ProjectionBase
                 HandleAccessAddressCreated(accessAddressCreated);
                 break;
             case (AccessAddressMunicipalCodeChanged accessAddressMunicipalCodeChanged):
-                await HandleAccessAddressMunicipalCodeChanged(accessAddressMunicipalCodeChanged, eventEnvelope.EventId).ConfigureAwait(false);
+                await HandleAccessAddressMunicipalCodeChanged(accessAddressMunicipalCodeChanged, eventEnvelope.EventId, eventEnvelope.GlobalVersion).ConfigureAwait(false);
                 break;
             case (AccessAddressStatusChanged accessAddressStatusChanged):
-                await HandleAccessAddressStatusChanged(accessAddressStatusChanged, eventEnvelope.EventId).ConfigureAwait(false);
+                await HandleAccessAddressStatusChanged(accessAddressStatusChanged, eventEnvelope.EventId, eventEnvelope.GlobalVersion).ConfigureAwait(false);
                 break;
             case (AccessAddressRoadCodeChanged accessAddressRoadCodeChanged):
-                await HandleAccessAddressRoadCodeChanged(accessAddressRoadCodeChanged, eventEnvelope.EventId).ConfigureAwait(false);
+                await HandleAccessAddressRoadCodeChanged(accessAddressRoadCodeChanged, eventEnvelope.EventId, eventEnvelope.GlobalVersion).ConfigureAwait(false);
                 break;
             case (AccessAddressHouseNumberChanged accessAddressHouseNumberChanged):
-                await HandleAccessAddressHouseNumberChanged(accessAddressHouseNumberChanged, eventEnvelope.EventId).ConfigureAwait(false);
+                await HandleAccessAddressHouseNumberChanged(accessAddressHouseNumberChanged, eventEnvelope.EventId, eventEnvelope.GlobalVersion).ConfigureAwait(false);
                 break;
             case (AccessAddressCoordinateChanged accessAddressCoordinateChanged):
-                await HandleAccessAddressCoordinateChanged(accessAddressCoordinateChanged, eventEnvelope.EventId).ConfigureAwait(false);
+                await HandleAccessAddressCoordinateChanged(accessAddressCoordinateChanged, eventEnvelope.EventId, eventEnvelope.GlobalVersion).ConfigureAwait(false);
                 break;
             case (AccessAddressSupplementaryTownNameChanged accessAddressSupplementaryTownNameChanged):
-                await HandleAccessAddressSupplementaryTownNameChanged(accessAddressSupplementaryTownNameChanged, eventEnvelope.EventId).ConfigureAwait(false);
+                await HandleAccessAddressSupplementaryTownNameChanged(accessAddressSupplementaryTownNameChanged, eventEnvelope.EventId, eventEnvelope.GlobalVersion).ConfigureAwait(false);
                 break;
             case (AccessAddressPlotIdChanged handleAccessAddressPlotIdChanged):
-                await HandleAccessAddressPlotIdChanged(handleAccessAddressPlotIdChanged, eventEnvelope.EventId).ConfigureAwait(false);
+                await HandleAccessAddressPlotIdChanged(handleAccessAddressPlotIdChanged, eventEnvelope.EventId, eventEnvelope.GlobalVersion).ConfigureAwait(false);
                 break;
             case (AccessAddressRoadIdChanged handleAccessAddressRoadIdChanged):
-                await HandleAccessAddressRoadIdChanged(handleAccessAddressRoadIdChanged, eventEnvelope.EventId).ConfigureAwait(false);
+                await HandleAccessAddressRoadIdChanged(handleAccessAddressRoadIdChanged, eventEnvelope.EventId, eventEnvelope.GlobalVersion).ConfigureAwait(false);
                 break;
             case (AccessAddressDeleted accessAddressDeleted):
                 HandleAccessAddressDeleted(accessAddressDeleted);
                 break;
 
             case UnitAddressCreated unitAddressCreated:
-                await HandleUnitAddressCreated(unitAddressCreated, eventEnvelope.EventId).ConfigureAwait(false);
+                await HandleUnitAddressCreated(unitAddressCreated, eventEnvelope.EventId, eventEnvelope.GlobalVersion).ConfigureAwait(false);
                 break;
             case UnitAddressAccessAddressIdChanged unitAddressAccessAddressIdChanged:
-                await HandleUnitAddressAccessAddressIdChanged(unitAddressAccessAddressIdChanged, eventEnvelope.EventId).ConfigureAwait(false);
+                await HandleUnitAddressAccessAddressIdChanged(unitAddressAccessAddressIdChanged, eventEnvelope.EventId, eventEnvelope.GlobalVersion).ConfigureAwait(false);
                 break;
             case UnitAddressStatusChanged unitAddressStatusChanged:
-                await HandleUnitAddressStatusChanged(unitAddressStatusChanged, eventEnvelope.EventId).ConfigureAwait(false);
+                await HandleUnitAddressStatusChanged(unitAddressStatusChanged, eventEnvelope.EventId, eventEnvelope.GlobalVersion).ConfigureAwait(false);
                 break;
             case UnitAddressFloorNameChanged unitAddressFloorNameChanged:
-                await HandleUnitAddressFloorNameChanged(unitAddressFloorNameChanged, eventEnvelope.EventId).ConfigureAwait(false);
+                await HandleUnitAddressFloorNameChanged(unitAddressFloorNameChanged, eventEnvelope.EventId, eventEnvelope.GlobalVersion).ConfigureAwait(false);
                 break;
             case UnitAddressSuiteNameChanged unitAddressSuiteNameChanged:
-                await HandleUnitAddressSuiteNameChanged(unitAddressSuiteNameChanged, eventEnvelope.EventId).ConfigureAwait(false);
+                await HandleUnitAddressSuiteNameChanged(unitAddressSuiteNameChanged, eventEnvelope.EventId, eventEnvelope.GlobalVersion).ConfigureAwait(false);
                 break;
             case UnitAddressDeleted unitAddressDeleted:
-                await HandleUnitAddressDeleted(unitAddressDeleted, eventEnvelope.EventId).ConfigureAwait(false);
+                await HandleUnitAddressDeleted(unitAddressDeleted, eventEnvelope.EventId, eventEnvelope.GlobalVersion).ConfigureAwait(false);
                 break;
 
             default:
@@ -174,7 +174,7 @@ internal sealed class AddressChangeProjection : ProjectionBase
                 postCodeId: accessAddressCreated.PostCodeId));
     }
 
-    private async Task HandleAccessAddressMunicipalCodeChanged(AccessAddressMunicipalCodeChanged changedEvent, Guid eventId)
+    private async Task HandleAccessAddressMunicipalCodeChanged(AccessAddressMunicipalCodeChanged changedEvent, Guid eventId, long sequenceNumber)
     {
         var oldAccessAddress = _accessAddressIdToAccessAddress[changedEvent.Id];
 
@@ -185,6 +185,7 @@ internal sealed class AddressChangeProjection : ProjectionBase
                     unitAddressId: unitAddressId,
                     eventId: eventId,
                     externalUpdated: changedEvent.ExternalUpdatedDate,
+                    sequenceNumber: sequenceNumber,
                     municipalCodeBefore: oldAccessAddress.MunicipalCode,
                     municipalCodeAfter: changedEvent.MunicipalCode))
                 .ConfigureAwait(false);
@@ -196,7 +197,7 @@ internal sealed class AddressChangeProjection : ProjectionBase
         };
     }
 
-    private async Task HandleAccessAddressStatusChanged(AccessAddressStatusChanged changedEvent, Guid eventId)
+    private async Task HandleAccessAddressStatusChanged(AccessAddressStatusChanged changedEvent, Guid eventId, long sequenceNumber)
     {
         var oldAccessAddress = _accessAddressIdToAccessAddress[changedEvent.Id];
 
@@ -207,6 +208,7 @@ internal sealed class AddressChangeProjection : ProjectionBase
                     unitAddressId: unitAddressId,
                     eventId: eventId,
                     externalUpdated: changedEvent.ExternalUpdatedDate,
+                    sequenceNumber: sequenceNumber,
                     statusBefore: oldAccessAddress.Status,
                     statusAfter: changedEvent.Status))
                 .ConfigureAwait(false);
@@ -218,7 +220,7 @@ internal sealed class AddressChangeProjection : ProjectionBase
         };
     }
 
-    private async Task HandleAccessAddressRoadCodeChanged(AccessAddressRoadCodeChanged changedEvent, Guid eventId)
+    private async Task HandleAccessAddressRoadCodeChanged(AccessAddressRoadCodeChanged changedEvent, Guid eventId, long sequenceNumber)
     {
         var oldAccessAddress = _accessAddressIdToAccessAddress[changedEvent.Id];
 
@@ -229,6 +231,7 @@ internal sealed class AddressChangeProjection : ProjectionBase
                     unitAddressId: unitAddressId,
                     eventId: eventId,
                     externalUpdated: changedEvent.ExternalUpdatedDate,
+                    sequenceNumber: sequenceNumber,
                     roadCodeBefore: oldAccessAddress.RoadCode,
                     roadCodeAfter: changedEvent.RoadCode))
                 .ConfigureAwait(false);
@@ -240,7 +243,7 @@ internal sealed class AddressChangeProjection : ProjectionBase
         };
     }
 
-    private async Task HandleAccessAddressHouseNumberChanged(AccessAddressHouseNumberChanged changedEvent, Guid eventId)
+    private async Task HandleAccessAddressHouseNumberChanged(AccessAddressHouseNumberChanged changedEvent, Guid eventId, long sequenceNumber)
     {
         var oldAccessAddress = _accessAddressIdToAccessAddress[changedEvent.Id];
 
@@ -251,6 +254,7 @@ internal sealed class AddressChangeProjection : ProjectionBase
                     unitAddressId: unitAddressId,
                     eventId: eventId,
                     externalUpdated: changedEvent.ExternalUpdatedDate,
+                    sequenceNumber: sequenceNumber,
                     houseNumberBefore: oldAccessAddress.HouseNumber,
                     houseNumberAfter: changedEvent.HouseNumber))
                 .ConfigureAwait(false);
@@ -262,7 +266,7 @@ internal sealed class AddressChangeProjection : ProjectionBase
         };
     }
 
-    private async Task HandleAccessAddressCoordinateChanged(AccessAddressCoordinateChanged changedEvent, Guid eventId)
+    private async Task HandleAccessAddressCoordinateChanged(AccessAddressCoordinateChanged changedEvent, Guid eventId, long sequenceNumber)
     {
         var oldAccessAddress = _accessAddressIdToAccessAddress[changedEvent.Id];
 
@@ -273,6 +277,7 @@ internal sealed class AddressChangeProjection : ProjectionBase
                     unitAddressId: unitAddressId,
                     eventId: eventId,
                     externalUpdated: changedEvent.ExternalUpdatedDate,
+                    sequenceNumber: sequenceNumber,
                     eastCoordinateBefore: oldAccessAddress.EastCoordinate,
                     northCoordinateBefore: oldAccessAddress.NorthCoordinate,
                     eastCoordinateAfter: changedEvent.EastCoordinate,
@@ -287,7 +292,7 @@ internal sealed class AddressChangeProjection : ProjectionBase
         };
     }
 
-    private async Task HandleAccessAddressSupplementaryTownNameChanged(AccessAddressSupplementaryTownNameChanged changedEvent, Guid eventId)
+    private async Task HandleAccessAddressSupplementaryTownNameChanged(AccessAddressSupplementaryTownNameChanged changedEvent, Guid eventId, long sequenceNumber)
     {
         var oldAccessAddress = _accessAddressIdToAccessAddress[changedEvent.Id];
 
@@ -298,6 +303,7 @@ internal sealed class AddressChangeProjection : ProjectionBase
                     unitAddressId: unitAddressId,
                     eventId: eventId,
                     externalUpdated: changedEvent.ExternalUpdatedDate,
+                    sequenceNumber: sequenceNumber,
                     supplementaryTownNameBefore: oldAccessAddress.SupplementaryTownName,
                     supplementaryTownNameAfter: changedEvent.SupplementaryTownName))
                 .ConfigureAwait(false);
@@ -309,7 +315,7 @@ internal sealed class AddressChangeProjection : ProjectionBase
         };
     }
 
-    private async Task HandleAccessAddressPlotIdChanged(AccessAddressPlotIdChanged changedEvent, Guid eventId)
+    private async Task HandleAccessAddressPlotIdChanged(AccessAddressPlotIdChanged changedEvent, Guid eventId, long sequenceNumber)
     {
         var oldAccessAddress = _accessAddressIdToAccessAddress[changedEvent.Id];
 
@@ -320,6 +326,7 @@ internal sealed class AddressChangeProjection : ProjectionBase
                     unitAddressId: unitAddressId,
                     eventId: eventId,
                     externalUpdated: changedEvent.ExternalUpdatedDate,
+                    sequenceNumber: sequenceNumber,
                     plotIdBefore: oldAccessAddress.PlotId,
                     plotIdAfter: changedEvent.PlotId))
                 .ConfigureAwait(false);
@@ -331,7 +338,7 @@ internal sealed class AddressChangeProjection : ProjectionBase
         };
     }
 
-    private async Task HandleAccessAddressRoadIdChanged(AccessAddressRoadIdChanged changedEvent, Guid eventId)
+    private async Task HandleAccessAddressRoadIdChanged(AccessAddressRoadIdChanged changedEvent, Guid eventId, long sequenceNumber)
     {
         var oldAccessAddress = _accessAddressIdToAccessAddress[changedEvent.Id];
 
@@ -342,6 +349,7 @@ internal sealed class AddressChangeProjection : ProjectionBase
                     unitAddressId: unitAddressId,
                     eventId: eventId,
                     externalUpdated: changedEvent.ExternalUpdatedDate,
+                    sequenceNumber: sequenceNumber,
                     roadIdBefore: oldAccessAddress.RoadId,
                     roadIdAfter: changedEvent.RoadId))
                 .ConfigureAwait(false);
@@ -359,7 +367,7 @@ internal sealed class AddressChangeProjection : ProjectionBase
         _accessAddressIdToUnitAddressIds.Remove(accessAddressDeleted.Id);
     }
 
-    private async Task HandleUnitAddressCreated(UnitAddressCreated changedEvent, Guid eventId)
+    private async Task HandleUnitAddressCreated(UnitAddressCreated changedEvent, Guid eventId, long sequenceNumber)
     {
         _accessAddressIdToUnitAddressIds[changedEvent.AccessAddressId].Add(changedEvent.Id);
 
@@ -367,7 +375,8 @@ internal sealed class AddressChangeProjection : ProjectionBase
             UnitAddressChangeConvert.Created(
                 unitAddressId: changedEvent.Id,
                 eventId: eventId,
-                externalUpdated: changedEvent.ExternalCreatedDate))
+                externalUpdated: changedEvent.ExternalCreatedDate,
+                sequenceNumber: sequenceNumber))
             .ConfigureAwait(false);
 
         _unitAddressIdToUnitAddress.Add(
@@ -380,7 +389,7 @@ internal sealed class AddressChangeProjection : ProjectionBase
                 externalUpdatedDate: changedEvent.ExternalUpdatedDate));
     }
 
-    private async Task HandleUnitAddressAccessAddressIdChanged(UnitAddressAccessAddressIdChanged changedEvent, Guid eventId)
+    private async Task HandleUnitAddressAccessAddressIdChanged(UnitAddressAccessAddressIdChanged changedEvent, Guid eventId, long sequenceNumber)
     {
         var oldUnitAddress = _unitAddressIdToUnitAddress[changedEvent.Id];
 
@@ -389,6 +398,7 @@ internal sealed class AddressChangeProjection : ProjectionBase
                 unitAddressId: changedEvent.Id,
                 eventId: eventId,
                 externalUpdated: changedEvent.ExternalUpdatedDate,
+                sequenceNumber: sequenceNumber,
                 accessAddressIdBefore: oldUnitAddress.AccessAddressId,
                 accessAddressIdAfter: changedEvent.AccessAddressId))
             .ConfigureAwait(false);
@@ -400,13 +410,14 @@ internal sealed class AddressChangeProjection : ProjectionBase
         };
     }
 
-    private async Task HandleUnitAddressStatusChanged(UnitAddressStatusChanged changedEvent, Guid eventId)
+    private async Task HandleUnitAddressStatusChanged(UnitAddressStatusChanged changedEvent, Guid eventId, long sequenceNumber)
     {
         await _addressChangesChannel.Writer.WriteAsync(
             UnitAddressChangeConvert.StatusChanged(
                 unitAddressId: changedEvent.Id,
                 eventId: eventId,
                 externalUpdated: changedEvent.ExternalUpdatedDate,
+                sequenceNumber: sequenceNumber,
                 statusBefore: _unitAddressIdToUnitAddress[changedEvent.Id].Status,
                 statusAfter: changedEvent.Status))
             .ConfigureAwait(false);
@@ -419,7 +430,7 @@ internal sealed class AddressChangeProjection : ProjectionBase
         };
     }
 
-    private async Task HandleUnitAddressFloorNameChanged(UnitAddressFloorNameChanged changedEvent, Guid eventId)
+    private async Task HandleUnitAddressFloorNameChanged(UnitAddressFloorNameChanged changedEvent, Guid eventId, long sequenceNumber)
     {
         var oldUnitAddress = _unitAddressIdToUnitAddress[changedEvent.Id];
 
@@ -428,6 +439,7 @@ internal sealed class AddressChangeProjection : ProjectionBase
                 unitAddressId: changedEvent.Id,
                 eventId: eventId,
                 externalUpdated: changedEvent.ExternalUpdatedDate,
+                sequenceNumber: sequenceNumber,
                 floorNameBefore: oldUnitAddress.FloorName,
                 floorNameAfter: changedEvent.FloorName))
             .ConfigureAwait(false);
@@ -439,7 +451,7 @@ internal sealed class AddressChangeProjection : ProjectionBase
         };
     }
 
-    private async Task HandleUnitAddressSuiteNameChanged(UnitAddressSuiteNameChanged changedEvent, Guid eventId)
+    private async Task HandleUnitAddressSuiteNameChanged(UnitAddressSuiteNameChanged changedEvent, Guid eventId, long sequenceNumber)
     {
         var oldUnitAddress = _unitAddressIdToUnitAddress[changedEvent.Id];
 
@@ -448,6 +460,7 @@ internal sealed class AddressChangeProjection : ProjectionBase
                 unitAddressId: changedEvent.Id,
                 eventId: eventId,
                 externalUpdated: changedEvent.ExternalUpdatedDate,
+                sequenceNumber: sequenceNumber,
                 suiteNameBefore: oldUnitAddress.SuiteName,
                 suiteNameAfter: changedEvent.SuiteName))
             .ConfigureAwait(false);
@@ -459,13 +472,14 @@ internal sealed class AddressChangeProjection : ProjectionBase
         };
     }
 
-    private async Task HandleUnitAddressDeleted(UnitAddressDeleted changedEvent, Guid eventId)
+    private async Task HandleUnitAddressDeleted(UnitAddressDeleted changedEvent, Guid eventId, long sequenceNumber)
     {
         await _addressChangesChannel.Writer.WriteAsync(
             UnitAddressChangeConvert.Deleted(
                 unitAddressId: changedEvent.Id,
                 eventId: eventId,
-                externalUpdated: changedEvent.ExternalUpdatedDate))
+                externalUpdated: changedEvent.ExternalUpdatedDate,
+                sequenceNumber: sequenceNumber))
             .ConfigureAwait(false);
 
         var oldUnitAddress = _unitAddressIdToUnitAddress[changedEvent.Id];
