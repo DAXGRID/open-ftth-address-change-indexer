@@ -557,6 +557,8 @@ internal sealed class AddressChangeProjection : ProjectionBase
         long sequenceNumber,
         DateTime eventTimestamp)
     {
+        var oldUnitAddress = _unitAddressIdToUnitAddress[changedEvent.Id];
+
         await _addressChangesChannel.Writer.WriteAsync(
             UnitAddressChangeConvert.StatusChanged(
                 unitAddressId: changedEvent.Id,
@@ -564,11 +566,10 @@ internal sealed class AddressChangeProjection : ProjectionBase
                 externalUpdated: changedEvent.ExternalUpdatedDate,
                 sequenceNumber: sequenceNumber,
                 eventTimestamp: eventTimestamp,
-                statusBefore: _unitAddressIdToUnitAddress[changedEvent.Id].Status,
+                statusBefore: oldUnitAddress.Status,
                 statusAfter: changedEvent.Status))
             .ConfigureAwait(false);
 
-        var oldUnitAddress = _unitAddressIdToUnitAddress[changedEvent.Id];
         _unitAddressIdToUnitAddress[changedEvent.Id] = oldUnitAddress with
         {
             Status = changedEvent.Status,
