@@ -11,7 +11,7 @@ internal sealed class AddressChangeIndexerHost : BackgroundService
 {
     const int BULK_COUNT_MAX = 50_000;
     const int BULK_INSERT_DELAY_MS = 250;
-    const int CATCHUP_TIME_MS = 60_000;
+    const int CATCHUP_TIME_MS = 600_000;
     private readonly ILogger<AddressChangeIndexerHost> _logger;
     private readonly IEventStore _eventStore;
     private readonly IDatabaseAddressChangeIndex _databaseAddressChangeIndex;
