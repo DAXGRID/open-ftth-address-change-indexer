@@ -17,9 +17,7 @@ internal static class UnitAddressChangeConvert
             changeType: AddressChangeType.UnitAddressCreated,
             externalUpdated: externalUpdated,
             sequenceNumber: sequenceNumber,
-            eventTimestamp: eventTimestamp,
-            before: null,
-            after: null);
+            eventTimestamp: eventTimestamp);
     }
 
     public static AddressChange AccessAddressIdChanged(

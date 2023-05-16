@@ -15,6 +15,7 @@ internal enum AddressChangeType
     AccessAddressPlotIdChanged,
     AccessAddressRoadIdChanged,
     AccessAddressCoordinateChanged,
+    AccessAddressDeleted,
     UnitAddressDeleted
 }
 
@@ -36,8 +37,8 @@ internal sealed record AddressChange
         DateTime? externalUpdated,
         long sequenceNumber,
         DateTime eventTimestamp,
-        string? before,
-        string? after)
+        string? before = null,
+        string? after = null)
     {
         UnitAddressId = unitAddressId;
         EventId = eventId;

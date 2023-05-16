@@ -165,4 +165,20 @@ internal static class AccessAddressChangeConvert
             before: $"{eastCoordinateBefore},{northCoordinateBefore}",
             after: $"{eastCoordinateAfter},{northCoordinateAfter}");
     }
+
+    public static AddressChange Deleted(
+        Guid unitAddressId,
+        Guid eventId,
+        DateTime? externalUpdated,
+        long sequenceNumber,
+        DateTime eventTimestamp)
+    {
+        return new AddressChange(
+            unitAddressId: unitAddressId,
+            eventId: eventId,
+            changeType: AddressChangeType.AccessAddressDeleted,
+            externalUpdated: externalUpdated,
+            sequenceNumber: sequenceNumber,
+            eventTimestamp: eventTimestamp);
+    }
 }

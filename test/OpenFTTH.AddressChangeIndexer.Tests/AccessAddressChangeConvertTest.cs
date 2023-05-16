@@ -271,4 +271,31 @@ public sealed class AccessAddressChangeConvertTest
 
         result.Should().BeEquivalentTo(expected);
     }
+
+    [Fact]
+    public void Deleted_to_address_change()
+    {
+        var unitAddressId = Guid.Parse("55113f86-b304-4ee8-945e-086a398f34ef");
+        var eventId = Guid.Parse("6665e1a1-0de2-4038-a0d0-3e155cc0d7ef");
+        var externalUpdated = DateTime.UtcNow;
+        var sequenceNumber = 50L;
+        var eventTimestamp = DateTime.UtcNow;
+
+        var expected = new AddressChange(
+            unitAddressId: unitAddressId,
+            eventId: eventId,
+            changeType: AddressChangeType.AccessAddressDeleted,
+            externalUpdated: externalUpdated,
+            sequenceNumber: sequenceNumber,
+            eventTimestamp: eventTimestamp);
+
+        var result = AccessAddressChangeConvert.Deleted(
+            unitAddressId: unitAddressId,
+            eventId: eventId,
+            externalUpdated: externalUpdated,
+            sequenceNumber: sequenceNumber,
+            eventTimestamp: eventTimestamp);
+
+        result.Should().BeEquivalentTo(expected);
+    }
 }

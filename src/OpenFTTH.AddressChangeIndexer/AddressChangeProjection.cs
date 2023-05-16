@@ -168,7 +168,12 @@ internal sealed class AddressChangeProjection : ProjectionBase
                 ).ConfigureAwait(false);
                 break;
             case (AccessAddressDeleted accessAddressDeleted):
-                HandleAccessAddressDeleted(accessAddressDeleted);
+                await HandleAccessAddressDeleted(
+                    accessAddressDeleted,
+                    eventEnvelope.EventId,
+                    eventEnvelope.GlobalVersion,
+                    eventEnvelope.EventTimestamp
+                ).ConfigureAwait(false);
                 break;
 
             case UnitAddressCreated unitAddressCreated:
@@ -471,10 +476,26 @@ internal sealed class AddressChangeProjection : ProjectionBase
         };
     }
 
-    private void HandleAccessAddressDeleted(AccessAddressDeleted accessAddressDeleted)
+    private async Task HandleAccessAddressDeleted(
+        AccessAddressDeleted changedEvent,
+        Guid eventId,
+        long sequenceNumber,
+        DateTime eventTimestamp)
     {
-        _accessAddressIdToAccessAddress.Remove(accessAddressDeleted.Id);
-        _accessAddressIdToUnitAddressIds.Remove(accessAddressDeleted.Id);
+        foreach (var unitAddressId in _accessAddressIdToUnitAddressIds[changedEvent.Id])
+        {
+            await _addressChangesChannel.Writer.WriteAsync(
+                AccessAddressChangeConvert.Deleted(
+                    unitAddressId: unitAddressId,
+                    eventId: eventId,
+                    externalUpdated: changedEvent.ExternalUpdatedDate,
+                    sequenceNumber: sequenceNumber,
+                    eventTimestamp: eventTimestamp))
+                .ConfigureAwait(false);
+        }
+
+        _accessAddressIdToAccessAddress.Remove(changedEvent.Id);
+        _accessAddressIdToUnitAddressIds.Remove(changedEvent.Id);
     }
 
     private async Task HandleUnitAddressCreated(

@@ -19,9 +19,7 @@ public sealed class UnitAddressChangeConvertTest
             changeType: AddressChangeType.UnitAddressCreated,
             externalUpdated: externalUpdated,
             sequenceNumber: sequenceNumber,
-            eventTimestamp: eventTimestamp,
-            before: null,
-            after: null);
+            eventTimestamp: eventTimestamp);
 
         var result = UnitAddressChangeConvert.Created(
             unitAddressId: unitAddressId,
