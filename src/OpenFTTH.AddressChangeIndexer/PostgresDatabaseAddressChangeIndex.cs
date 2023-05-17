@@ -14,6 +14,22 @@ internal class PostgresDatabaseAddressChangeIndex : IDatabaseAddressChangeIndex
     }
 
     /// <summary>
+    /// Retrieves the highest sequence number, if none is found, it returns 0.
+    /// </summary>
+    public long HighestSequenceNumber()
+    {
+        const string GET_LAST_SEQUENCE_NUMBER_SQL = @"
+SELECT MAX(sequence_number)
+FROM location.address_changes";
+
+        using var connection = new NpgsqlConnection(_setting.GeoDatabaseConnectionString);
+        using var cmd = new NpgsqlCommand(GET_LAST_SEQUENCE_NUMBER_SQL, connection);
+        connection.Open();
+        var result = cmd.ExecuteScalar();
+        return result == DBNull.Value ? 0 : ((long?)result == null ? 0 : (long)result);
+    }
+
+    /// <summary>
     /// Creates the schema for address changes if it does not already exists.
     /// </summary>
     public void InitSchema()

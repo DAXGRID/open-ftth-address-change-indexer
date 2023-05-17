@@ -59,21 +59,23 @@ internal sealed class AddressChangeIndexerHost : BackgroundService
 
         var processAddressChangesTask = Task.Run(async () =>
         {
-            _logger.LogInformation("Starting address change processor.");
+            var lastRunSequenceNumber = _databaseAddressChangeIndex.HighestSequenceNumber();
+            _logger.LogInformation(
+                "Starting address change processor, the last runs max sequence number was {HighestSequenceNumber}, will only procecss all sequence numbers after.",
+                lastRunSequenceNumber);
 
             var addressChangesBulk = new BlockingCollection<AddressChange>(
                 new ConcurrentBag<AddressChange>(),
                 BULK_COUNT_MAX);
 
-            var addressChangesReader = addressChangesReaderCh
-                .ReadAllAsync(stoppingToken)
-                .ConfigureAwait(false);
-
             var readerChannelTask = Task.Run(async () =>
             {
-                await foreach (var addressChange in addressChangesReader)
+                await foreach (var addressChange in addressChangesReaderCh.ReadAllAsync(stoppingToken).ConfigureAwait(false))
                 {
-                    addressChangesBulk.Add(addressChange);
+                    if (addressChange.SequenceNumber > lastRunSequenceNumber)
+                    {
+                        addressChangesBulk.Add(addressChange);
+                    }
                 }
             }, stoppingToken);
 
@@ -115,7 +117,7 @@ internal sealed class AddressChangeIndexerHost : BackgroundService
 
         try
         {
-            await Task.WhenAll(dehydrateTask, processAddressChangesTask).ConfigureAwait(false);
+            await Task.WhenAll(processAddressChangesTask, processAddressChangesTask).ConfigureAwait(false);
         }
         catch (OperationCanceledException)
         {
