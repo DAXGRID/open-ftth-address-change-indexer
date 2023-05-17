@@ -75,6 +75,7 @@ internal sealed class AddressChangeProjection : ProjectionBase
     private readonly Dictionary<Guid, AccessAddress> _accessAddressIdToAccessAddress = new();
     private readonly Dictionary<Guid, List<Guid>> _accessAddressIdToUnitAddressIds = new();
     private readonly Dictionary<Guid, string> _roadIdToRoadName = new();
+    private readonly Dictionary<Guid, List<Guid>> _roadIdToUnitAddressIds = new();
 
     public AddressChangeProjection()
     {
@@ -109,7 +110,12 @@ internal sealed class AddressChangeProjection : ProjectionBase
                 HandleRoadCreated(roadCreated);
                 break;
             case (RoadNameChanged roadNameChanged):
-                HandleRoadNameChanged(roadNameChanged);
+                await HandleRoadNameChanged(
+                    roadNameChanged,
+                    eventEnvelope.EventId,
+                    eventEnvelope.GlobalVersion,
+                    eventEnvelope.EventTimestamp
+                ).ConfigureAwait(false);
                 break;
             case (RoadDeleted roadDeleted):
                 HandleRoadDeleted(roadDeleted);
@@ -249,16 +255,39 @@ internal sealed class AddressChangeProjection : ProjectionBase
     private void HandleRoadCreated(RoadCreated roadCreated)
     {
         _roadIdToRoadName.Add(roadCreated.Id, roadCreated.Name);
+        _roadIdToUnitAddressIds.Add(roadCreated.Id, new());
     }
 
-    private void HandleRoadNameChanged(RoadNameChanged roadNameChanged)
+    private async Task HandleRoadNameChanged(
+        RoadNameChanged roadNameChanged,
+        Guid eventId,
+        long sequenceNumber,
+        DateTime eventTimestamp)
     {
-        _roadIdToRoadName[roadNameChanged.Id] = roadNameChanged.Name;
+        var roadNameBefore = _roadIdToRoadName[roadNameChanged.Id];
+        var roadNameAfter = roadNameChanged.Name;
+
+        foreach (var unitAddressId in _roadIdToUnitAddressIds[roadNameChanged.Id])
+        {
+            await _addressChangesChannel.Writer.WriteAsync(
+                AccessAddressChangeConvert.RoadNameChanged(
+                    unitAddressId: unitAddressId,
+                    eventId: eventId,
+                    externalUpdated: roadNameChanged.ExternalUpdatedDate,
+                    sequenceNumber: sequenceNumber,
+                    eventTimestamp: eventTimestamp,
+                    roadNameBefore: roadNameBefore,
+                    roadNameAfter: roadNameAfter))
+                .ConfigureAwait(false);
+        }
+
+        _roadIdToRoadName[roadNameChanged.Id] = roadNameAfter;
     }
 
     private void HandleRoadDeleted(RoadDeleted roadDeleted)
     {
         _roadIdToRoadName.Remove(roadDeleted.Id);
+        _roadIdToUnitAddressIds.Remove(roadDeleted.Id);
     }
 
     private void HandleAccessAddressCreated(AccessAddressCreated accessAddressCreated)
@@ -499,8 +528,8 @@ internal sealed class AddressChangeProjection : ProjectionBase
                     roadIdAfter: changedEvent.RoadId))
                 .ConfigureAwait(false);
 
-            var oldRoadName = _roadIdToRoadName[oldAccessAddress.RoadId];
-            var newRoadName = _roadIdToRoadName[changedEvent.RoadId];
+            var roadNameBefore = _roadIdToRoadName[oldAccessAddress.RoadId];
+            var roadNameAfter = _roadIdToRoadName[changedEvent.RoadId];
             await _addressChangesChannel.Writer.WriteAsync(
                 AccessAddressChangeConvert.RoadIdChangedNewRoadName(
                     unitAddressId: unitAddressId,
@@ -508,8 +537,8 @@ internal sealed class AddressChangeProjection : ProjectionBase
                     externalUpdated: changedEvent.ExternalUpdatedDate,
                     sequenceNumber: sequenceNumber,
                     eventTimestamp: eventTimestamp,
-                    roadNameBefore: oldRoadName,
-                    roadNameAfter: newRoadName))
+                    roadNameBefore: roadNameBefore,
+                    roadNameAfter: roadNameAfter))
                 .ConfigureAwait(false);
         }
 
@@ -517,6 +546,9 @@ internal sealed class AddressChangeProjection : ProjectionBase
         {
             RoadId = changedEvent.RoadId,
         };
+
+        _roadIdToUnitAddressIds[oldAccessAddress.RoadId].Remove(changedEvent.Id);
+        _roadIdToUnitAddressIds[changedEvent.RoadId].Add(changedEvent.Id);
     }
 
     private async Task HandleAccessAddressDeleted(

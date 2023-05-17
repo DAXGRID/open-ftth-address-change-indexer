@@ -236,6 +236,39 @@ public sealed class AccessAddressChangeConvertTest
     }
 
     [Fact]
+    public void Road__name_changed_to_address_change()
+    {
+        var unitAddressId = Guid.Parse("55113f86-b304-4ee8-945e-086a398f34ef");
+        var eventId = Guid.Parse("6665e1a1-0de2-4038-a0d0-3e155cc0d7ef");
+        var externalUpdated = DateTime.UtcNow;
+        var roadNameBefore = "Vejlevej 10";
+        var roadNameAfter = "Fredericiavej 20";
+        var sequenceNumber = 50L;
+        var eventTimestamp = DateTime.UtcNow;
+
+        var expected = new AddressChange(
+            unitAddressId: unitAddressId,
+            eventId: eventId,
+            changeType: AddressChangeType.AccessAddressRoadNameChanged,
+            externalUpdated: externalUpdated,
+            sequenceNumber: sequenceNumber,
+            eventTimestamp: eventTimestamp,
+            before: roadNameBefore,
+            after: roadNameAfter);
+
+        var result = AccessAddressChangeConvert.RoadNameChanged(
+            unitAddressId: unitAddressId,
+            eventId: eventId,
+            externalUpdated: externalUpdated,
+            sequenceNumber: sequenceNumber,
+            eventTimestamp: eventTimestamp,
+            roadNameBefore: roadNameBefore,
+            roadNameAfter: roadNameAfter);
+
+        result.Should().BeEquivalentTo(expected);
+    }
+
+    [Fact]
     public void Road_id_changed_new_road_name_to_address_change()
     {
         var unitAddressId = Guid.Parse("55113f86-b304-4ee8-945e-086a398f34ef");

@@ -124,6 +124,26 @@ internal static class AccessAddressChangeConvert
             after: plotIdAfter);
     }
 
+    public static AddressChange RoadNameChanged(
+        Guid unitAddressId,
+        Guid eventId,
+        DateTime? externalUpdated,
+        long sequenceNumber,
+        DateTime eventTimestamp,
+        string roadNameBefore,
+        string roadNameAfter)
+    {
+         return new AddressChange(
+            unitAddressId: unitAddressId,
+            eventId: eventId,
+            changeType: AddressChangeType.AccessAddressRoadNameChanged,
+            externalUpdated: externalUpdated,
+            sequenceNumber: sequenceNumber,
+            eventTimestamp: eventTimestamp,
+            before: roadNameBefore,
+            after: roadNameAfter);
+    }
+
     public static AddressChange RoadIdChanged(
         Guid unitAddressId,
         Guid eventId,
