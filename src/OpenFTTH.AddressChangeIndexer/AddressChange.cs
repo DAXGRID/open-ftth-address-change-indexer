@@ -31,6 +31,7 @@ internal sealed record AddressChange
     public long SequenceNumber { get; init; }
     public string? Before { get; init; }
     public string? After { get; init; }
+    public double? MovedDistanceMeters { get; init; }
 
     public AddressChange(
         Guid unitAddressId,
@@ -40,7 +41,8 @@ internal sealed record AddressChange
         long sequenceNumber,
         DateTime eventTimestamp,
         string? before = null,
-        string? after = null)
+        string? after = null,
+        double? movedDistanceMeters = null)
     {
         UnitAddressId = unitAddressId;
         EventId = eventId;
@@ -50,5 +52,6 @@ internal sealed record AddressChange
         EventTimestamp = eventTimestamp;
         Before = before;
         After = after;
+        MovedDistanceMeters = movedDistanceMeters;
     }
 }

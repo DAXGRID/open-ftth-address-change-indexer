@@ -307,10 +307,10 @@ public sealed class AccessAddressChangeConvertTest
         var unitAddressId = Guid.Parse("55113f86-b304-4ee8-945e-086a398f34ef");
         var eventId = Guid.Parse("6665e1a1-0de2-4038-a0d0-3e155cc0d7ef");
         var externalUpdated = DateTime.UtcNow;
-        var eastCoordinateBefore = 53.205;
-        var northCoordinateBefore = 10.203;
-        var eastCoordinateAfter = 63.206;
-        var northCoordinateAfter = 20.204;
+        var eastCoordinateBefore = 552544.9150898305;
+        var northCoordinateBefore = 6320096.655193312;
+        var eastCoordinateAfter = 552545.1250902505;
+        var northCoordinateAfter = 6320096.795193592;
         var sequenceNumber = 50L;
         var eventTimestamp = DateTime.UtcNow;
 
@@ -321,8 +321,9 @@ public sealed class AccessAddressChangeConvertTest
             externalUpdated: externalUpdated,
             sequenceNumber: sequenceNumber,
             eventTimestamp: eventTimestamp,
-            before: "53.205,10.203",
-            after: "63.206,20.204");
+            before: "552544.9150898305,6320096.655193312",
+            after: "552545.1250902505,6320096.795193592",
+            movedDistanceMeters: 0.2523890940467118);
 
         var result = AccessAddressChangeConvert.CoordinateChanged(
             unitAddressId: unitAddressId,

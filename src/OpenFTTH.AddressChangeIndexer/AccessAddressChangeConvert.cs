@@ -1,4 +1,5 @@
 using OpenFTTH.Core.Address;
+using NetTopologySuite.Geometries;
 
 namespace OpenFTTH.AddressChangeIndexer;
 
@@ -203,7 +204,8 @@ internal static class AccessAddressChangeConvert
             sequenceNumber: sequenceNumber,
             eventTimestamp: eventTimestamp,
             before: $"{eastCoordinateBefore},{northCoordinateBefore}",
-            after: $"{eastCoordinateAfter},{northCoordinateAfter}");
+            after: $"{eastCoordinateAfter},{northCoordinateAfter}",
+            movedDistanceMeters: new Point(eastCoordinateBefore, northCoordinateBefore).Distance(new Point(eastCoordinateAfter, northCoordinateAfter)));
     }
 
     public static AddressChange Deleted(

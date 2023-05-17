@@ -42,6 +42,7 @@ CREATE TABLE IF NOT EXISTS location.address_changes(
   change_type varchar(255) NOT NULL,
   event_timestamp timestamptz NOT NULL,
   external_updated timestamptz NULL,
+  moved_distance_meters double precision NULL,
   before varchar(4096) NULL,
   after varchar(4096) NULL,
   PRIMARY KEY(unit_address_id, event_id, change_type))";
@@ -62,6 +63,7 @@ COPY location.address_changes(
   change_type,
   event_timestamp,
   external_updated,
+  moved_distance_meters,
   before,
   after) FROM STDIN (FORMAT BINARY)";
 
@@ -79,6 +81,7 @@ COPY location.address_changes(
                     addressChange.ChangeType.ToString(),
                     addressChange.EventTimestamp,
                     addressChange.ExternalUpdated is not null ? addressChange.ExternalUpdated : DBNull.Value,
+                    addressChange.MovedDistanceMeters is not null ? addressChange.MovedDistanceMeters : DBNull.Value,
                     addressChange.Before is not null ? addressChange.Before : DBNull.Value,
                     addressChange.After is not null ? addressChange.After : DBNull.Value);
             }
