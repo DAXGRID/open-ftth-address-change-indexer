@@ -170,6 +170,39 @@ public sealed class AccessAddressChangeConvertTest
     }
 
     [Fact]
+    public void Road_id_changed_to_address_change()
+    {
+        var unitAddressId = Guid.Parse("55113f86-b304-4ee8-945e-086a398f34ef");
+        var eventId = Guid.Parse("6665e1a1-0de2-4038-a0d0-3e155cc0d7ef");
+        var externalUpdated = DateTime.UtcNow;
+        var roadIdBefore = Guid.Parse("efcfe55a-e2c3-4bd2-ae08-44327787da54");
+        var roadIdAfter = Guid.Parse("fce4562c-1b64-4bbb-a02f-7e8e966a5ea0");
+        var sequenceNumber = 50L;
+        var eventTimestamp = DateTime.UtcNow;
+
+        var expected = new AddressChange(
+            unitAddressId: unitAddressId,
+            eventId: eventId,
+            changeType: AddressChangeType.AccessAddressRoadIdChanged,
+            externalUpdated: externalUpdated,
+            sequenceNumber: sequenceNumber,
+            eventTimestamp: eventTimestamp,
+            before: roadIdBefore.ToString(),
+            after: roadIdAfter.ToString());
+
+        var result = AccessAddressChangeConvert.RoadIdChanged(
+            unitAddressId: unitAddressId,
+            eventId: eventId,
+            externalUpdated: externalUpdated,
+            sequenceNumber: sequenceNumber,
+            eventTimestamp: eventTimestamp,
+            roadIdBefore: roadIdBefore,
+            roadIdAfter: roadIdAfter);
+
+        result.Should().BeEquivalentTo(expected);
+    }
+
+    [Fact]
     public void Plot_id_changed_to_address_change()
     {
         var unitAddressId = Guid.Parse("55113f86-b304-4ee8-945e-086a398f34ef");
@@ -203,34 +236,34 @@ public sealed class AccessAddressChangeConvertTest
     }
 
     [Fact]
-    public void Road_id_changed_to_address_change()
+    public void Road_id_changed_new_road_name_to_address_change()
     {
         var unitAddressId = Guid.Parse("55113f86-b304-4ee8-945e-086a398f34ef");
         var eventId = Guid.Parse("6665e1a1-0de2-4038-a0d0-3e155cc0d7ef");
         var externalUpdated = DateTime.UtcNow;
-        var roadIdBefore = Guid.Parse("efcfe55a-e2c3-4bd2-ae08-44327787da54");
-        var roadIdAfter = Guid.Parse("fce4562c-1b64-4bbb-a02f-7e8e966a5ea0");
+        var roadNameBefore = "Vejlevej 10";
+        var roadNameAfter = "Fredericiavej 20";
         var sequenceNumber = 50L;
         var eventTimestamp = DateTime.UtcNow;
 
         var expected = new AddressChange(
             unitAddressId: unitAddressId,
             eventId: eventId,
-            changeType: AddressChangeType.AccessAddressRoadIdChanged,
+            changeType: AddressChangeType.AccessAddressRoadIdChangedNewRoadName,
             externalUpdated: externalUpdated,
             sequenceNumber: sequenceNumber,
             eventTimestamp: eventTimestamp,
-            before: roadIdBefore.ToString(),
-            after: roadIdAfter.ToString());
+            before: roadNameBefore,
+            after: roadNameAfter);
 
-        var result = AccessAddressChangeConvert.RoadIdChanged(
+        var result = AccessAddressChangeConvert.RoadIdChangedNewRoadName(
             unitAddressId: unitAddressId,
             eventId: eventId,
             externalUpdated: externalUpdated,
             sequenceNumber: sequenceNumber,
             eventTimestamp: eventTimestamp,
-            roadIdBefore: roadIdBefore,
-            roadIdAfter: roadIdAfter);
+            roadNameBefore: roadNameBefore,
+            roadNameAfter: roadNameAfter);
 
         result.Should().BeEquivalentTo(expected);
     }

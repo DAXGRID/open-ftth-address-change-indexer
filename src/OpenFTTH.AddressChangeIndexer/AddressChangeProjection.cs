@@ -74,9 +74,14 @@ internal sealed class AddressChangeProjection : ProjectionBase
     private readonly Dictionary<Guid, UnitAddress> _unitAddressIdToUnitAddress = new();
     private readonly Dictionary<Guid, AccessAddress> _accessAddressIdToAccessAddress = new();
     private readonly Dictionary<Guid, List<Guid>> _accessAddressIdToUnitAddressIds = new();
+    private readonly Dictionary<Guid, string> _roadIdToRoadName = new();
 
     public AddressChangeProjection()
     {
+        ProjectEventAsync<RoadCreated>(ProjectAsync);
+        ProjectEventAsync<RoadNameChanged>(ProjectAsync);
+        ProjectEventAsync<RoadDeleted>(ProjectAsync);
+
         ProjectEventAsync<AccessAddressCreated>(ProjectAsync);
         ProjectEventAsync<AccessAddressMunicipalCodeChanged>(ProjectAsync);
         ProjectEventAsync<AccessAddressStatusChanged>(ProjectAsync);
@@ -100,6 +105,16 @@ internal sealed class AddressChangeProjection : ProjectionBase
     {
         switch (eventEnvelope.Data)
         {
+            case (RoadCreated roadCreated):
+                HandleRoadCreated(roadCreated);
+                break;
+            case (RoadNameChanged roadNameChanged):
+                HandleRoadNameChanged(roadNameChanged);
+                break;
+            case (RoadDeleted roadDeleted):
+                HandleRoadDeleted(roadDeleted);
+                break;
+
             case (AccessAddressCreated accessAddressCreated):
                 HandleAccessAddressCreated(accessAddressCreated);
                 break;
@@ -229,6 +244,21 @@ internal sealed class AddressChangeProjection : ProjectionBase
                 throw new ArgumentException(
                     $"Could not handle typeof '{eventEnvelope.Data.GetType().Name}'");
         }
+    }
+
+    private void HandleRoadCreated(RoadCreated roadCreated)
+    {
+        _roadIdToRoadName.Add(roadCreated.Id, roadCreated.Name);
+    }
+
+    private void HandleRoadNameChanged(RoadNameChanged roadNameChanged)
+    {
+        _roadIdToRoadName[roadNameChanged.Id] = roadNameChanged.Name;
+    }
+
+    private void HandleRoadDeleted(RoadDeleted roadDeleted)
+    {
+        _roadIdToRoadName.Remove(roadDeleted.Id);
     }
 
     private void HandleAccessAddressCreated(AccessAddressCreated accessAddressCreated)
@@ -467,6 +497,19 @@ internal sealed class AddressChangeProjection : ProjectionBase
                     eventTimestamp: eventTimestamp,
                     roadIdBefore: oldAccessAddress.RoadId,
                     roadIdAfter: changedEvent.RoadId))
+                .ConfigureAwait(false);
+
+            var oldRoadName = _roadIdToRoadName[oldAccessAddress.RoadId];
+            var newRoadName = _roadIdToRoadName[changedEvent.RoadId];
+            await _addressChangesChannel.Writer.WriteAsync(
+                AccessAddressChangeConvert.RoadIdChangedNewRoadName(
+                    unitAddressId: unitAddressId,
+                    eventId: eventId,
+                    externalUpdated: changedEvent.ExternalUpdatedDate,
+                    sequenceNumber: sequenceNumber,
+                    eventTimestamp: eventTimestamp,
+                    roadNameBefore: oldRoadName,
+                    roadNameAfter: newRoadName))
                 .ConfigureAwait(false);
         }
 

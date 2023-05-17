@@ -14,6 +14,7 @@ internal enum AddressChangeType
     AccessAddressSupplementaryTownNameChanged,
     AccessAddressPlotIdChanged,
     AccessAddressRoadIdChanged,
+    AccessAddressRoadIdChangedNewRoadName,
     AccessAddressCoordinateChanged,
     AccessAddressDeleted,
     UnitAddressDeleted

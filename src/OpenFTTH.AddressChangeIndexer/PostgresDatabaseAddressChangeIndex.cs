@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS location.address_changes(
   external_updated timestamptz NULL,
   before varchar(4096) NULL,
   after varchar(4096) NULL,
-  PRIMARY KEY(unit_address_id, event_id))";
+  PRIMARY KEY(unit_address_id, event_id, change_type))";
 
         using var connection = new NpgsqlConnection(_setting.GeoDatabaseConnectionString);
         using var cmd = new NpgsqlCommand(INIT_SCHEMA_SQL, connection);
