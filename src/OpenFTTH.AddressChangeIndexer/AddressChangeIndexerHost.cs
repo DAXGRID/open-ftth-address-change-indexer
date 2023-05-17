@@ -93,15 +93,7 @@ internal sealed class AddressChangeIndexerHost : BackgroundService
                             bulkInsertChanges[i] = addressChangesBulk.Take();
                         }
 
-                        try
-                        {
-                            _databaseAddressChangeIndex.BulkInsert(bulkInsertChanges);
-                        }
-                        catch (Exception ex)
-                        {
-                            _logger.LogError("{Exception}", ex);
-                            throw;
-                        }
+                        _databaseAddressChangeIndex.BulkInsert(bulkInsertChanges);
 
                         _logger.LogInformation(
                             "Finished bulk inserting {Count} address changes.",
