@@ -15,6 +15,16 @@ executors:
         auth:
           username: $DOCKER_LOGIN
           password: $DOCKER_ACCESSTOKEN
+  alpine-git:
+    environment:
+      IMAGE_NAME: openftth/address-change-indexer
+      CHART_PATH: ./dax/address-change-indexer
+      GIT_USER_NAME: "dax-bot"
+      GIT_USER_EMAIL: "admin@dax.dk"
+      GIT_CLONE_REPO: "git@github.com:DAXGRID/dax-charts.git"
+      SSH_FINGERPRINT: "4a:6c:45:9b:1c:0a:ee:6c:e6:d4:e7:a2:4b:2e:9c:34"
+    docker:
+    - image: alpine/git
 
 jobs:
   build-app:
@@ -116,6 +126,15 @@ workflows:
            - build-app
            - test-app
            - build-docker-image
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
+      - update-helm-chart:
+          context: docker
+          requires:
+           - docker-publish-image
           filters:
             tags:
               only: /^v.*/
