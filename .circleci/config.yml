@@ -9,7 +9,7 @@ executors:
         password: $DOCKER_ACCESSTOKEN
   docker-publisher:
     environment:
-      IMAGE_NAME: openftth/open-ftth-address-change-indexer
+      IMAGE_NAME: openftth/address-change-indexer
     docker:
       - image: cimg/base:2022.11
         auth:
