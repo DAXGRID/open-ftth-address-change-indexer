@@ -47,6 +47,8 @@ internal sealed class AddressChangeIndexerHost : BackgroundService
                 "Finished dehydration, memory after dehydration {MibiBytes}.",
                 Process.GetCurrentProcess().PrivateMemorySize64 / 1024 / 1024);
 
+            using var _ = File.Create("/healthy");
+
             while (!stoppingToken.IsCancellationRequested)
             {
                 await Task.Delay(CATCHUP_TIME_MS, stoppingToken).ConfigureAwait(false);
