@@ -113,7 +113,7 @@ internal sealed class AddressChangeIndexerHost : BackgroundService
 
         try
         {
-            await Task.WhenAll(processAddressChangesTask, processAddressChangesTask).ConfigureAwait(false);
+            await Task.WhenAll(dehydrateTask, processAddressChangesTask, processAddressChangesTask).ConfigureAwait(false);
         }
         catch (OperationCanceledException)
         {
