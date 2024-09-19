@@ -322,6 +322,8 @@ internal sealed class AddressChangeProjection : ProjectionBase
     {
         _accessAddressIdToUnitAddressIds.Add(accessAddressCreated.Id, new());
 
+        _roadIdToUnitAddressIds[changedEvent.RoadId].Add(accessAddressCreated.Id)
+
         _accessAddressIdToAccessAddress.Add(
             accessAddressCreated.Id,
             new(municipalCode: accessAddressCreated.MunicipalCode,
