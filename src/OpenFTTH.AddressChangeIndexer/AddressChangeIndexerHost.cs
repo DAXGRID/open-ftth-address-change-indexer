@@ -38,24 +38,32 @@ internal sealed class AddressChangeIndexerHost : BackgroundService
 
         var dehydrateTask = Task.Run(async () =>
         {
-            _logger.LogInformation("Starting dehydration.");
-            await _eventStore
-                .DehydrateProjectionsAsync(stoppingToken)
-                .ConfigureAwait(false);
-
-            _logger.LogInformation(
-                "Finished dehydration, memory after dehydration {MibiBytes}.",
-                Process.GetCurrentProcess().PrivateMemorySize64 / 1024 / 1024);
-
-            using var _ = File.Create("/tmp/healthy");
-
-            while (!stoppingToken.IsCancellationRequested)
+            try
             {
-                await Task.Delay(CATCHUP_TIME_MS, stoppingToken).ConfigureAwait(false);
-                _logger.LogInformation("Checking for new events.");
+                _logger.LogInformation("Starting dehydration.");
                 await _eventStore
-                    .CatchUpAsync(stoppingToken)
+                    .DehydrateProjectionsAsync(stoppingToken)
                     .ConfigureAwait(false);
+
+                _logger.LogInformation(
+                    "Finished dehydration, memory after dehydration {MibiBytes}.",
+                    Process.GetCurrentProcess().PrivateMemorySize64 / 1024 / 1024);
+
+                using var _ = File.Create("/tmp/healthy");
+
+                while (!stoppingToken.IsCancellationRequested)
+                {
+                    await Task.Delay(CATCHUP_TIME_MS, stoppingToken).ConfigureAwait(false);
+                    _logger.LogInformation("Checking for new events.");
+                    await _eventStore
+                        .CatchUpAsync(stoppingToken)
+                        .ConfigureAwait(false);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogCritical("{Exception}", ex);
+                throw;
             }
         }, stoppingToken);
 
