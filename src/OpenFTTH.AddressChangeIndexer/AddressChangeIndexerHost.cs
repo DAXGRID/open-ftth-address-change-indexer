@@ -28,6 +28,8 @@ internal sealed class AddressChangeIndexerHost : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        using var cancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(stoppingToken);
+
         _logger.LogInformation("Starting {HostName}.", nameof(AddressChangeIndexerHost));
 
         _logger.LogInformation("Creating schema if it does not already exist.");
@@ -63,6 +65,7 @@ internal sealed class AddressChangeIndexerHost : BackgroundService
             catch (Exception ex)
             {
                 _logger.LogCritical("{Exception}", ex);
+                await cancellationTokenSource.CancelAsync().ConfigureAwait(false);
                 throw;
             }
         }, stoppingToken);
@@ -91,28 +94,37 @@ internal sealed class AddressChangeIndexerHost : BackgroundService
 
             var bulkInsertTask = Task.Run(async () =>
             {
-                while (!stoppingToken.IsCancellationRequested)
+                try
                 {
-                    // We need to make sure we always use the same count.
-                    var changesCount = addressChangesBulk.Count;
-                    if (changesCount > 0)
+                    while (!stoppingToken.IsCancellationRequested)
                     {
-                        var bulkInsertChanges = new AddressChange[changesCount];
-                        for (var i = 0; i < changesCount; i++)
+                        // We need to make sure we always use the same count.
+                        var changesCount = addressChangesBulk.Count;
+                        if (changesCount > 0)
                         {
-                            bulkInsertChanges[i] = addressChangesBulk.Take();
+                            var bulkInsertChanges = new AddressChange[changesCount];
+                            for (var i = 0; i < changesCount; i++)
+                            {
+                                bulkInsertChanges[i] = addressChangesBulk.Take();
+                            }
+
+                            _logger.LogInformation("Bulk inserting {BulkInsertCount}", changesCount);
+
+                            _databaseAddressChangeIndex.BulkInsert(bulkInsertChanges);
+
+                            _logger.LogInformation(
+                                "Finished bulk inserting {Count} address changes.",
+                                changesCount);
                         }
 
-                        _logger.LogInformation("Bulk inserting {BulkInsertCount}", changesCount);
-
-                        _databaseAddressChangeIndex.BulkInsert(bulkInsertChanges);
-
-                        _logger.LogInformation(
-                            "Finished bulk inserting {Count} address changes.",
-                            changesCount);
+                        await Task.Delay(BULK_INSERT_DELAY_MS).ConfigureAwait(false);
                     }
-
-                    await Task.Delay(BULK_INSERT_DELAY_MS).ConfigureAwait(false);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogCritical("{Exception}", ex);
+                    await cancellationTokenSource.CancelAsync().ConfigureAwait(false);
+                    throw;
                 }
             }, stoppingToken);
 
