@@ -30,6 +30,7 @@ internal static class Program
         }
         catch (Exception ex)
         {
+            Environment.ExitCode = 1;
             logger!.LogCritical("{Exception}", ex);
             throw;
         }
