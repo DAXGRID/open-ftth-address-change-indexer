@@ -120,9 +120,5 @@ internal sealed class AddressChangeIndexerHost : BackgroundService
             // it will always be because of a shutdown request from OS.
             _logger.LogInformation("OperationCanceledException, requested shutdown...");
         }
-        catch (AggregateException)
-        {
-            throw;
-        }
     }
 }
