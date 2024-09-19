@@ -3,6 +3,7 @@ using OpenFTTH.Core.Address.Events;
 using OpenFTTH.EventSourcing;
 using System.Threading.Channels;
 using Microsoft.Extensions.Logging;
+using System.Text.Json;
 
 namespace OpenFTTH.AddressChangeIndexer;
 
@@ -109,151 +110,159 @@ internal sealed class AddressChangeProjection : ProjectionBase
 
     private async Task ProjectAsync(IEventEnvelope eventEnvelope)
     {
-        switch (eventEnvelope.Data)
+        try
         {
-            case (RoadCreated roadCreated):
-                HandleRoadCreated(roadCreated);
-                break;
-            case (RoadNameChanged roadNameChanged):
-                await HandleRoadNameChanged(
-                    roadNameChanged,
-                    eventEnvelope.EventId,
-                    eventEnvelope.GlobalVersion,
-                    eventEnvelope.EventTimestamp
-                ).ConfigureAwait(false);
-                break;
-            case (RoadDeleted roadDeleted):
-                HandleRoadDeleted(roadDeleted);
-                break;
+            switch (eventEnvelope.Data)
+            {
+                case (RoadCreated roadCreated):
+                    HandleRoadCreated(roadCreated);
+                    break;
+                case (RoadNameChanged roadNameChanged):
+                    await HandleRoadNameChanged(
+                        roadNameChanged,
+                        eventEnvelope.EventId,
+                        eventEnvelope.GlobalVersion,
+                        eventEnvelope.EventTimestamp
+                    ).ConfigureAwait(false);
+                    break;
+                case (RoadDeleted roadDeleted):
+                    HandleRoadDeleted(roadDeleted);
+                    break;
 
-            case (AccessAddressCreated accessAddressCreated):
-                HandleAccessAddressCreated(accessAddressCreated);
-                break;
-            case (AccessAddressMunicipalCodeChanged accessAddressMunicipalCodeChanged):
-                await HandleAccessAddressMunicipalCodeChanged(
-                    accessAddressMunicipalCodeChanged,
-                    eventEnvelope.EventId,
-                    eventEnvelope.GlobalVersion,
-                    eventEnvelope.EventTimestamp
-                ).ConfigureAwait(false);
-                break;
-            case (AccessAddressStatusChanged accessAddressStatusChanged):
-                await HandleAccessAddressStatusChanged(
-                    accessAddressStatusChanged,
-                    eventEnvelope.EventId,
-                    eventEnvelope.GlobalVersion,
-                    eventEnvelope.EventTimestamp
-                ).ConfigureAwait(false);
-                break;
-            case (AccessAddressRoadCodeChanged accessAddressRoadCodeChanged):
-                await HandleAccessAddressRoadCodeChanged(
-                    accessAddressRoadCodeChanged,
-                    eventEnvelope.EventId,
-                    eventEnvelope.GlobalVersion,
-                    eventEnvelope.EventTimestamp
-                ).ConfigureAwait(false);
-                break;
-            case (AccessAddressHouseNumberChanged accessAddressHouseNumberChanged):
-                await HandleAccessAddressHouseNumberChanged(
-                    accessAddressHouseNumberChanged,
-                    eventEnvelope.EventId,
-                    eventEnvelope.GlobalVersion,
-                    eventEnvelope.EventTimestamp
-                ).ConfigureAwait(false);
-                break;
-            case (AccessAddressCoordinateChanged accessAddressCoordinateChanged):
-                await HandleAccessAddressCoordinateChanged(
-                    accessAddressCoordinateChanged,
-                    eventEnvelope.EventId,
-                    eventEnvelope.GlobalVersion,
-                    eventEnvelope.EventTimestamp
-                ).ConfigureAwait(false);
-                break;
-            case (AccessAddressSupplementaryTownNameChanged accessAddressSupplementaryTownNameChanged):
-                await HandleAccessAddressSupplementaryTownNameChanged(
-                    accessAddressSupplementaryTownNameChanged,
-                    eventEnvelope.EventId,
-                    eventEnvelope.GlobalVersion,
-                    eventEnvelope.EventTimestamp
-                ).ConfigureAwait(false);
-                break;
-            case (AccessAddressPlotIdChanged handleAccessAddressPlotIdChanged):
-                await HandleAccessAddressPlotIdChanged(
-                    handleAccessAddressPlotIdChanged,
-                    eventEnvelope.EventId,
-                    eventEnvelope.GlobalVersion,
-                    eventEnvelope.EventTimestamp
-                ).ConfigureAwait(false);
-                break;
-            case (AccessAddressRoadIdChanged handleAccessAddressRoadIdChanged):
-                await HandleAccessAddressRoadIdChanged(
-                    handleAccessAddressRoadIdChanged,
-                    eventEnvelope.EventId,
-                    eventEnvelope.GlobalVersion,
-                    eventEnvelope.EventTimestamp
-                ).ConfigureAwait(false);
-                break;
-            case (AccessAddressDeleted accessAddressDeleted):
-                await HandleAccessAddressDeleted(
-                    accessAddressDeleted,
-                    eventEnvelope.EventId,
-                    eventEnvelope.GlobalVersion,
-                    eventEnvelope.EventTimestamp
-                ).ConfigureAwait(false);
-                break;
+                case (AccessAddressCreated accessAddressCreated):
+                    HandleAccessAddressCreated(accessAddressCreated);
+                    break;
+                case (AccessAddressMunicipalCodeChanged accessAddressMunicipalCodeChanged):
+                    await HandleAccessAddressMunicipalCodeChanged(
+                        accessAddressMunicipalCodeChanged,
+                        eventEnvelope.EventId,
+                        eventEnvelope.GlobalVersion,
+                        eventEnvelope.EventTimestamp
+                    ).ConfigureAwait(false);
+                    break;
+                case (AccessAddressStatusChanged accessAddressStatusChanged):
+                    await HandleAccessAddressStatusChanged(
+                        accessAddressStatusChanged,
+                        eventEnvelope.EventId,
+                        eventEnvelope.GlobalVersion,
+                        eventEnvelope.EventTimestamp
+                    ).ConfigureAwait(false);
+                    break;
+                case (AccessAddressRoadCodeChanged accessAddressRoadCodeChanged):
+                    await HandleAccessAddressRoadCodeChanged(
+                        accessAddressRoadCodeChanged,
+                        eventEnvelope.EventId,
+                        eventEnvelope.GlobalVersion,
+                        eventEnvelope.EventTimestamp
+                    ).ConfigureAwait(false);
+                    break;
+                case (AccessAddressHouseNumberChanged accessAddressHouseNumberChanged):
+                    await HandleAccessAddressHouseNumberChanged(
+                        accessAddressHouseNumberChanged,
+                        eventEnvelope.EventId,
+                        eventEnvelope.GlobalVersion,
+                        eventEnvelope.EventTimestamp
+                    ).ConfigureAwait(false);
+                    break;
+                case (AccessAddressCoordinateChanged accessAddressCoordinateChanged):
+                    await HandleAccessAddressCoordinateChanged(
+                        accessAddressCoordinateChanged,
+                        eventEnvelope.EventId,
+                        eventEnvelope.GlobalVersion,
+                        eventEnvelope.EventTimestamp
+                    ).ConfigureAwait(false);
+                    break;
+                case (AccessAddressSupplementaryTownNameChanged accessAddressSupplementaryTownNameChanged):
+                    await HandleAccessAddressSupplementaryTownNameChanged(
+                        accessAddressSupplementaryTownNameChanged,
+                        eventEnvelope.EventId,
+                        eventEnvelope.GlobalVersion,
+                        eventEnvelope.EventTimestamp
+                    ).ConfigureAwait(false);
+                    break;
+                case (AccessAddressPlotIdChanged handleAccessAddressPlotIdChanged):
+                    await HandleAccessAddressPlotIdChanged(
+                        handleAccessAddressPlotIdChanged,
+                        eventEnvelope.EventId,
+                        eventEnvelope.GlobalVersion,
+                        eventEnvelope.EventTimestamp
+                    ).ConfigureAwait(false);
+                    break;
+                case (AccessAddressRoadIdChanged handleAccessAddressRoadIdChanged):
+                    await HandleAccessAddressRoadIdChanged(
+                        handleAccessAddressRoadIdChanged,
+                        eventEnvelope.EventId,
+                        eventEnvelope.GlobalVersion,
+                        eventEnvelope.EventTimestamp
+                    ).ConfigureAwait(false);
+                    break;
+                case (AccessAddressDeleted accessAddressDeleted):
+                    await HandleAccessAddressDeleted(
+                        accessAddressDeleted,
+                        eventEnvelope.EventId,
+                        eventEnvelope.GlobalVersion,
+                        eventEnvelope.EventTimestamp
+                    ).ConfigureAwait(false);
+                    break;
 
-            case UnitAddressCreated unitAddressCreated:
-                await HandleUnitAddressCreated(
-                    unitAddressCreated,
-                    eventEnvelope.EventId,
-                    eventEnvelope.GlobalVersion,
-                    eventEnvelope.EventTimestamp
-                ).ConfigureAwait(false);
-                break;
-            case UnitAddressAccessAddressIdChanged unitAddressAccessAddressIdChanged:
-                await HandleUnitAddressAccessAddressIdChanged(
-                    unitAddressAccessAddressIdChanged,
-                    eventEnvelope.EventId,
-                    eventEnvelope.GlobalVersion,
-                    eventEnvelope.EventTimestamp
-                ).ConfigureAwait(false);
-                break;
-            case UnitAddressStatusChanged unitAddressStatusChanged:
-                await HandleUnitAddressStatusChanged(
-                    unitAddressStatusChanged,
-                    eventEnvelope.EventId,
-                    eventEnvelope.GlobalVersion,
-                    eventEnvelope.EventTimestamp
-                ).ConfigureAwait(false);
-                break;
-            case UnitAddressFloorNameChanged unitAddressFloorNameChanged:
-                await HandleUnitAddressFloorNameChanged(
-                    unitAddressFloorNameChanged,
-                    eventEnvelope.EventId,
-                    eventEnvelope.GlobalVersion,
-                    eventEnvelope.EventTimestamp
-                ).ConfigureAwait(false);
-                break;
-            case UnitAddressSuiteNameChanged unitAddressSuiteNameChanged:
-                await HandleUnitAddressSuiteNameChanged(
-                    unitAddressSuiteNameChanged,
-                    eventEnvelope.EventId,
-                    eventEnvelope.GlobalVersion,
-                    eventEnvelope.EventTimestamp
-                ).ConfigureAwait(false);
-                break;
-            case UnitAddressDeleted unitAddressDeleted:
-                await HandleUnitAddressDeleted(
-                    unitAddressDeleted,
-                    eventEnvelope.EventId,
-                    eventEnvelope.GlobalVersion,
-                    eventEnvelope.EventTimestamp
-                ).ConfigureAwait(false);
-                break;
+                case UnitAddressCreated unitAddressCreated:
+                    await HandleUnitAddressCreated(
+                        unitAddressCreated,
+                        eventEnvelope.EventId,
+                        eventEnvelope.GlobalVersion,
+                        eventEnvelope.EventTimestamp
+                    ).ConfigureAwait(false);
+                    break;
+                case UnitAddressAccessAddressIdChanged unitAddressAccessAddressIdChanged:
+                    await HandleUnitAddressAccessAddressIdChanged(
+                        unitAddressAccessAddressIdChanged,
+                        eventEnvelope.EventId,
+                        eventEnvelope.GlobalVersion,
+                        eventEnvelope.EventTimestamp
+                    ).ConfigureAwait(false);
+                    break;
+                case UnitAddressStatusChanged unitAddressStatusChanged:
+                    await HandleUnitAddressStatusChanged(
+                        unitAddressStatusChanged,
+                        eventEnvelope.EventId,
+                        eventEnvelope.GlobalVersion,
+                        eventEnvelope.EventTimestamp
+                    ).ConfigureAwait(false);
+                    break;
+                case UnitAddressFloorNameChanged unitAddressFloorNameChanged:
+                    await HandleUnitAddressFloorNameChanged(
+                        unitAddressFloorNameChanged,
+                        eventEnvelope.EventId,
+                        eventEnvelope.GlobalVersion,
+                        eventEnvelope.EventTimestamp
+                    ).ConfigureAwait(false);
+                    break;
+                case UnitAddressSuiteNameChanged unitAddressSuiteNameChanged:
+                    await HandleUnitAddressSuiteNameChanged(
+                        unitAddressSuiteNameChanged,
+                        eventEnvelope.EventId,
+                        eventEnvelope.GlobalVersion,
+                        eventEnvelope.EventTimestamp
+                    ).ConfigureAwait(false);
+                    break;
+                case UnitAddressDeleted unitAddressDeleted:
+                    await HandleUnitAddressDeleted(
+                        unitAddressDeleted,
+                        eventEnvelope.EventId,
+                        eventEnvelope.GlobalVersion,
+                        eventEnvelope.EventTimestamp
+                    ).ConfigureAwait(false);
+                    break;
 
-            default:
-                throw new ArgumentException(
-                    $"Could not handle typeof '{eventEnvelope.Data.GetType().Name}'");
+                default:
+                    throw new ArgumentException(
+                        $"Could not handle typeof '{eventEnvelope.Data.GetType().Name}'");
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogCritical("{Exception}, {EventEnvelope}", ex, JsonSerializer.Serialize(eventEnvelope));
+            throw;
         }
     }
 
