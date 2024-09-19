@@ -301,9 +301,11 @@ internal sealed class AddressChangeProjection : ProjectionBase
         {
             //
             _logger.LogWarning(
-                "Could not remove the road with '{RoadId}' because the following unit addresses still points to it {}",
+                "Could not remove the road with '{RoadId}' because the following unit addresses still points to it {UnitAddresses}, {ExternalUpdatedDate}",
                 roadDeleted.Id,
-                string.Join(",", _roadIdToUnitAddressIds[roadDeleted.Id]));
+                string.Join(",", _roadIdToUnitAddressIds[roadDeleted.Id]),
+                roadDeleted.ExternalUpdatedDate
+            );
         }
     }
 
