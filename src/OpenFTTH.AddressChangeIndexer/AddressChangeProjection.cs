@@ -286,8 +286,9 @@ internal sealed class AddressChangeProjection : ProjectionBase
 
     private void HandleRoadDeleted(RoadDeleted roadDeleted)
     {
-        _roadIdToRoadName.Remove(roadDeleted.Id);
-        _roadIdToUnitAddressIds.Remove(roadDeleted.Id);
+        // This has been uncommented because sometimes DAWA deletes roads when there are still addresses pointing at them.
+        // _roadIdToRoadName.Remove(roadDeleted.Id);
+        // _roadIdToUnitAddressIds.Remove(roadDeleted.Id);
     }
 
     private void HandleAccessAddressCreated(AccessAddressCreated accessAddressCreated)
