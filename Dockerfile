@@ -25,11 +25,8 @@ FROM mcr.microsoft.com/dotnet/runtime:${DOTNET_VERSION}
 # Renew the ARG argument for it to be available in this build context.
 ARG PROJECT_NAME
 
-# Cannot reference ARG in CMD, so we set it in ENV instead.
-ENV EXECUTEABLE=${PROJECT_NAME}.dll
-
 WORKDIR /app
 
 COPY --from=build-env /app/src/${PROJECT_NAME}/out .
 
-CMD dotnet $(echo ${EXECUTEABLE})
+ENTRYPOINT ["dotnet", "OpenFTTH.AddressChangeIndexer.dll"]
