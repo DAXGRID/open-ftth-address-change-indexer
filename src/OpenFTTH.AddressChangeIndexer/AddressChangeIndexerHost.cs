@@ -89,6 +89,7 @@ internal sealed class AddressChangeIndexerHost : BackgroundService
                     var changesCount = addressChangesBulk.Count;
                     if (changesCount > 0)
                     {
+                        _logger.LogInformation("Bulk inserting {BulkInsertCount}", changesCount);
                         var bulkInsertChanges = new AddressChange[changesCount];
                         for (var i = 0; i < changesCount; i++)
                         {
