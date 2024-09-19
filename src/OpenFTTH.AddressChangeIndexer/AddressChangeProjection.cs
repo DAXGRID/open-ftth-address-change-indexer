@@ -296,7 +296,7 @@ internal sealed class AddressChangeProjection : ProjectionBase
             _roadIdToRoadName.Remove(roadDeleted.Id);
             _roadIdToUnitAddressIds.Remove(roadDeleted.Id);
         }
-        // This can happen if DAWA addresses points at deleted roads.
+        // This can happen if DAWA unit addresses points at deleted roads.
         else
         {
             //
