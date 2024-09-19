@@ -291,12 +291,12 @@ internal sealed class AddressChangeProjection : ProjectionBase
 
     private void HandleRoadDeleted(RoadDeleted roadDeleted)
     {
-        // This can happen if DAWA addresses points at deleted roads.
         if (_roadIdToUnitAddressIds.Count == 0)
         {
             _roadIdToRoadName.Remove(roadDeleted.Id);
             _roadIdToUnitAddressIds.Remove(roadDeleted.Id);
         }
+        // This can happen if DAWA addresses points at deleted roads.
         else
         {
             //
