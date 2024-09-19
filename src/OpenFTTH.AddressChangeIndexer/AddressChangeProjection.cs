@@ -2,6 +2,7 @@ using OpenFTTH.Core.Address;
 using OpenFTTH.Core.Address.Events;
 using OpenFTTH.EventSourcing;
 using System.Threading.Channels;
+using Microsoft.Extensions.Logging;
 
 namespace OpenFTTH.AddressChangeIndexer;
 
@@ -68,6 +69,8 @@ internal sealed record UnitAddress
 
 internal sealed class AddressChangeProjection : ProjectionBase
 {
+    private readonly ILogger<AddressChangeProjection> _logger;
+
     public ChannelReader<AddressChange> AddressChanges => _addressChangesChannel.Reader;
 
     private readonly Channel<AddressChange> _addressChangesChannel = Channel.CreateUnbounded<AddressChange>();
@@ -77,8 +80,10 @@ internal sealed class AddressChangeProjection : ProjectionBase
     private readonly Dictionary<Guid, string> _roadIdToRoadName = new();
     private readonly Dictionary<Guid, List<Guid>> _roadIdToUnitAddressIds = new();
 
-    public AddressChangeProjection()
+    public AddressChangeProjection(ILogger<AddressChangeProjection> logger)
     {
+        _logger = logger;
+
         ProjectEventAsync<RoadCreated>(ProjectAsync);
         ProjectEventAsync<RoadNameChanged>(ProjectAsync);
         ProjectEventAsync<RoadDeleted>(ProjectAsync);
@@ -284,11 +289,22 @@ internal sealed class AddressChangeProjection : ProjectionBase
         _roadIdToRoadName[roadNameChanged.Id] = roadNameAfter;
     }
 
-    private static void HandleRoadDeleted(RoadDeleted roadDeleted)
+    private void HandleRoadDeleted(RoadDeleted roadDeleted)
     {
-        // This has been uncommented because sometimes DAWA deletes roads when there are still addresses pointing at them.
-        // _roadIdToRoadName.Remove(roadDeleted.Id);
-        // _roadIdToUnitAddressIds.Remove(roadDeleted.Id);
+        // This can happen if DAWA addresses points at deleted roads.
+        if (_roadIdToUnitAddressIds.Count == 0)
+        {
+            _roadIdToRoadName.Remove(roadDeleted.Id);
+            _roadIdToUnitAddressIds.Remove(roadDeleted.Id);
+        }
+        else
+        {
+            //
+            _logger.LogWarning(
+                "Could not remove the road with '{RoadId}' because the following unit addresses still points to it {}",
+                roadDeleted.Id,
+                string.Join(",", _roadIdToUnitAddressIds[roadDeleted.Id]));
+        }
     }
 
     private void HandleAccessAddressCreated(AccessAddressCreated accessAddressCreated)
