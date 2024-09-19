@@ -291,7 +291,7 @@ internal sealed class AddressChangeProjection : ProjectionBase
 
     private void HandleRoadDeleted(RoadDeleted roadDeleted)
     {
-        if (_roadIdToUnitAddressIds.Count == 0)
+        if (_roadIdToUnitAddressIds[roadDeleted.Id].Count == 0)
         {
             _roadIdToRoadName.Remove(roadDeleted.Id);
             _roadIdToUnitAddressIds.Remove(roadDeleted.Id);
