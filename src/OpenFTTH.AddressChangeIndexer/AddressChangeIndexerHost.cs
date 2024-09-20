@@ -44,7 +44,7 @@ internal sealed class AddressChangeIndexerHost : BackgroundService
             {
                 _logger.LogInformation("Starting dehydration.");
                 await _eventStore
-                    .DehydrateProjectionsAsync(stoppingToken)
+                    .DehydrateProjectionsAsync(cancellationTokenSource.Token)
                     .ConfigureAwait(false);
 
                 _logger.LogInformation(
@@ -53,12 +53,12 @@ internal sealed class AddressChangeIndexerHost : BackgroundService
 
                 using var _ = File.Create("/tmp/healthy");
 
-                while (!stoppingToken.IsCancellationRequested)
+                while (!cancellationTokenSource.Token.IsCancellationRequested)
                 {
-                    await Task.Delay(CATCHUP_TIME_MS, stoppingToken).ConfigureAwait(false);
+                    await Task.Delay(CATCHUP_TIME_MS, cancellationTokenSource.Token).ConfigureAwait(false);
                     _logger.LogInformation("Checking for new events.");
                     await _eventStore
-                        .CatchUpAsync(stoppingToken)
+                        .CatchUpAsync(cancellationTokenSource.Token)
                         .ConfigureAwait(false);
                 }
             }
@@ -68,7 +68,7 @@ internal sealed class AddressChangeIndexerHost : BackgroundService
                 await cancellationTokenSource.CancelAsync().ConfigureAwait(false);
                 throw;
             }
-        }, stoppingToken);
+        }, cancellationTokenSource.Token);
 
         var processAddressChangesTask = Task.Run(async () =>
         {
@@ -83,20 +83,20 @@ internal sealed class AddressChangeIndexerHost : BackgroundService
 
             var readerChannelTask = Task.Run(async () =>
             {
-                await foreach (var addressChange in addressChangesReaderCh.ReadAllAsync(stoppingToken).ConfigureAwait(false))
+                await foreach (var addressChange in addressChangesReaderCh.ReadAllAsync(cancellationTokenSource.Token).ConfigureAwait(false))
                 {
                     if (addressChange.SequenceNumber > lastRunSequenceNumber)
                     {
                         addressChangesBulk.Add(addressChange);
                     }
                 }
-            }, stoppingToken);
+            }, cancellationTokenSource.Token);
 
             var bulkInsertTask = Task.Run(async () =>
             {
                 try
                 {
-                    while (!stoppingToken.IsCancellationRequested)
+                    while (!cancellationTokenSource.Token.IsCancellationRequested)
                     {
                         // We need to make sure we always use the same count.
                         var changesCount = addressChangesBulk.Count;
@@ -126,10 +126,10 @@ internal sealed class AddressChangeIndexerHost : BackgroundService
                     await cancellationTokenSource.CancelAsync().ConfigureAwait(false);
                     throw;
                 }
-            }, stoppingToken);
+            }, cancellationTokenSource.Token);
 
             await Task.WhenAll(readerChannelTask, bulkInsertTask).ConfigureAwait(false);
-        }, stoppingToken);
+        }, cancellationTokenSource.Token);
 
         try
         {
