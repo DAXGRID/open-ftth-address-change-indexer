@@ -25,8 +25,7 @@ internal static class Program
 
             host.Services.GetService<IEventStore>()!.ScanForProjections();
 
-            await host.StartAsync().ConfigureAwait(false);
-            await host.WaitForShutdownAsync().ConfigureAwait(false);
+            await host.RunAsync().ConfigureAwait(false);
         }
         catch (Exception ex)
         {
