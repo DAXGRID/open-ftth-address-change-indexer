@@ -604,6 +604,7 @@ internal sealed class AddressChangeProjection : ProjectionBase
 
         _accessAddressIdToAccessAddress.Remove(changedEvent.Id);
         _accessAddressIdToUnitAddressIds.Remove(changedEvent.Id);
+        _roadIdToAccessAddressIds[changedEvent.Id].Remove(changedEvent.Id);
     }
 
     private async Task HandleUnitAddressCreated(
