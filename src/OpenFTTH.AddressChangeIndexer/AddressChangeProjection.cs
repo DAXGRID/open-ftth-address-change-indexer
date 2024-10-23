@@ -287,7 +287,7 @@ internal sealed class AddressChangeProjection : ProjectionBase
             {
                 await _addressChangesChannel.Writer.WriteAsync(
                     AccessAddressChangeConvert.RoadNameChanged(
-                        unitAddressId: accessAddressId,
+                        unitAddressId: unitAddressId,
                         eventId: eventId,
                         externalUpdated: roadNameChanged.ExternalUpdatedDate,
                         sequenceNumber: sequenceNumber,
