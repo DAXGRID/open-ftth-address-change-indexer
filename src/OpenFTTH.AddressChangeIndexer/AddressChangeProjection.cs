@@ -602,9 +602,11 @@ internal sealed class AddressChangeProjection : ProjectionBase
                 .ConfigureAwait(false);
         }
 
+        var accessAddress = _accessAddressIdToAccessAddress[changedEvent.Id];
+        _roadIdToAccessAddressIds[accessAddress.RoadId].Remove(changedEvent.Id);
+
         _accessAddressIdToAccessAddress.Remove(changedEvent.Id);
         _accessAddressIdToUnitAddressIds.Remove(changedEvent.Id);
-        _roadIdToAccessAddressIds[changedEvent.Id].Remove(changedEvent.Id);
     }
 
     private async Task HandleUnitAddressCreated(
