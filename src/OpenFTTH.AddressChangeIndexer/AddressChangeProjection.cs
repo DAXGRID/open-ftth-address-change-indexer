@@ -615,13 +615,6 @@ internal sealed class AddressChangeProjection : ProjectionBase
         long sequenceNumber,
         DateTime eventTimestamp)
     {
-        try {
-
-
-        } catch (Exception ex)
-        {
-
-        }
         _accessAddressIdToUnitAddressIds[changedEvent.AccessAddressId].Add(changedEvent.Id);
 
         await _addressChangesChannel.Writer.WriteAsync(
