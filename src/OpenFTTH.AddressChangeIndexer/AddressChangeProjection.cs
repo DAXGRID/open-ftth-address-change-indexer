@@ -615,33 +615,32 @@ internal sealed class AddressChangeProjection : ProjectionBase
         long sequenceNumber,
         DateTime eventTimestamp)
     {
+        try {
 
-        if (_accessAddressIdToUnitAddressIds.ContainsKey(changedEvent.AccessAddressId))
+
+        } catch (Exception ex)
         {
-            _accessAddressIdToUnitAddressIds[changedEvent.AccessAddressId].Add(changedEvent.Id);
 
-            await _addressChangesChannel.Writer.WriteAsync(
-                UnitAddressChangeConvert.Created(
-                    unitAddressId: changedEvent.Id,
-                    eventId: eventId,
-                    externalUpdated: changedEvent.ExternalCreatedDate,
-                    sequenceNumber: sequenceNumber,
-                    eventTimestamp: eventTimestamp))
-                .ConfigureAwait(false);
+        }
+        _accessAddressIdToUnitAddressIds[changedEvent.AccessAddressId].Add(changedEvent.Id);
 
-            _unitAddressIdToUnitAddress.Add(
-                changedEvent.Id,
-                new UnitAddress(
-                    accessAddressId: changedEvent.AccessAddressId,
-                    status: changedEvent.Status,
-                    floorName: changedEvent.FloorName,
-                    suiteName: changedEvent.SuiteName,
-                    externalUpdatedDate: changedEvent.ExternalUpdatedDate));
-        }
-        else
-        {
-            _logger.LogInformation("Could not load {AccessAddress} that the {UnitAddress} points to.", changedEvent.AccessAddressId, changedEvent.Id);
-        }
+        await _addressChangesChannel.Writer.WriteAsync(
+            UnitAddressChangeConvert.Created(
+                unitAddressId: changedEvent.Id,
+                eventId: eventId,
+                externalUpdated: changedEvent.ExternalCreatedDate,
+                sequenceNumber: sequenceNumber,
+                eventTimestamp: eventTimestamp))
+            .ConfigureAwait(false);
+
+        _unitAddressIdToUnitAddress.Add(
+            changedEvent.Id,
+            new UnitAddress(
+                accessAddressId: changedEvent.AccessAddressId,
+                status: changedEvent.Status,
+                floorName: changedEvent.FloorName,
+                suiteName: changedEvent.SuiteName,
+                externalUpdatedDate: changedEvent.ExternalUpdatedDate));
     }
 
     private async Task HandleUnitAddressAccessAddressIdChanged(
