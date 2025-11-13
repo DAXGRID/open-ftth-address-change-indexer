@@ -98,7 +98,6 @@ internal sealed class AddressChangeProjection : ProjectionBase
         ProjectEventAsync<AccessAddressPlotIdChanged>(ProjectAsync);
         ProjectEventAsync<AccessAddressRoadIdChanged>(ProjectAsync);
         ProjectEventAsync<AccessAddressCoordinateChanged>(ProjectAsync);
-        ProjectEventAsync<AccessAddressDeleted>(ProjectAsync);
 
         ProjectEventAsync<UnitAddressCreated>(ProjectAsync);
         ProjectEventAsync<UnitAddressAccessAddressIdChanged>(ProjectAsync);
@@ -196,15 +195,6 @@ internal sealed class AddressChangeProjection : ProjectionBase
                         eventEnvelope.EventTimestamp
                     ).ConfigureAwait(false);
                     break;
-                case (AccessAddressDeleted accessAddressDeleted):
-                    await HandleAccessAddressDeleted(
-                        accessAddressDeleted,
-                        eventEnvelope.EventId,
-                        eventEnvelope.GlobalVersion,
-                        eventEnvelope.EventTimestamp
-                    ).ConfigureAwait(false);
-                    break;
-
                 case UnitAddressCreated unitAddressCreated:
                     await HandleUnitAddressCreated(
                         unitAddressCreated,
