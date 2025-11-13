@@ -98,6 +98,7 @@ internal sealed class AddressChangeProjection : ProjectionBase
         ProjectEventAsync<AccessAddressPlotIdChanged>(ProjectAsync);
         ProjectEventAsync<AccessAddressRoadIdChanged>(ProjectAsync);
         ProjectEventAsync<AccessAddressCoordinateChanged>(ProjectAsync);
+        ProjectEventAsync<AccessAddressDeleted>(ProjectAsync);
 
         ProjectEventAsync<UnitAddressCreated>(ProjectAsync);
         ProjectEventAsync<UnitAddressAccessAddressIdChanged>(ProjectAsync);
@@ -195,6 +196,15 @@ internal sealed class AddressChangeProjection : ProjectionBase
                         eventEnvelope.EventTimestamp
                     ).ConfigureAwait(false);
                     break;
+                case (AccessAddressDeleted accessAddressDeleted):
+                    await HandleAccessAddressDeleted(
+                        accessAddressDeleted,
+                        eventEnvelope.EventId,
+                        eventEnvelope.GlobalVersion,
+                        eventEnvelope.EventTimestamp
+                    ).ConfigureAwait(false);
+                    break;
+
                 case UnitAddressCreated unitAddressCreated:
                     await HandleUnitAddressCreated(
                         unitAddressCreated,
@@ -605,25 +615,33 @@ internal sealed class AddressChangeProjection : ProjectionBase
         long sequenceNumber,
         DateTime eventTimestamp)
     {
-        _accessAddressIdToUnitAddressIds[changedEvent.AccessAddressId].Add(changedEvent.Id);
 
-        await _addressChangesChannel.Writer.WriteAsync(
-            UnitAddressChangeConvert.Created(
-                unitAddressId: changedEvent.Id,
-                eventId: eventId,
-                externalUpdated: changedEvent.ExternalCreatedDate,
-                sequenceNumber: sequenceNumber,
-                eventTimestamp: eventTimestamp))
-            .ConfigureAwait(false);
+        if (_accessAddressIdToUnitAddressIds.ContainsKey(changedEvent.AccessAddressId))
+        {
+            _accessAddressIdToUnitAddressIds[changedEvent.AccessAddressId].Add(changedEvent.Id);
 
-        _unitAddressIdToUnitAddress.Add(
-            changedEvent.Id,
-            new UnitAddress(
-                accessAddressId: changedEvent.AccessAddressId,
-                status: changedEvent.Status,
-                floorName: changedEvent.FloorName,
-                suiteName: changedEvent.SuiteName,
-                externalUpdatedDate: changedEvent.ExternalUpdatedDate));
+            await _addressChangesChannel.Writer.WriteAsync(
+                UnitAddressChangeConvert.Created(
+                    unitAddressId: changedEvent.Id,
+                    eventId: eventId,
+                    externalUpdated: changedEvent.ExternalCreatedDate,
+                    sequenceNumber: sequenceNumber,
+                    eventTimestamp: eventTimestamp))
+                .ConfigureAwait(false);
+
+            _unitAddressIdToUnitAddress.Add(
+                changedEvent.Id,
+                new UnitAddress(
+                    accessAddressId: changedEvent.AccessAddressId,
+                    status: changedEvent.Status,
+                    floorName: changedEvent.FloorName,
+                    suiteName: changedEvent.SuiteName,
+                    externalUpdatedDate: changedEvent.ExternalUpdatedDate));
+        }
+        else
+        {
+            _logger.LogInformation("Could not load {AccessAddress} that the {UnitAddress} points to.", changedEvent.AccessAddressId, changedEvent.Id);
+        }
     }
 
     private async Task HandleUnitAddressAccessAddressIdChanged(
