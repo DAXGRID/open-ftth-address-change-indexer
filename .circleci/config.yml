@@ -9,7 +9,7 @@ executors:
         password: $DOCKER_ACCESSTOKEN
   docker-publisher:
     environment:
-      IMAGE_NAME: openftth/address-change-indexer
+      IMAGE_NAME: daxgrid/address-change-indexer
     docker:
       - image: cimg/base:current
         auth:
