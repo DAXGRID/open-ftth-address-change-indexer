@@ -27,6 +27,8 @@ ARG PROJECT_NAME
 
 WORKDIR /app
 
+RUN apk add --no-cache icu-libs krb5-libs
+
 COPY --from=build-env /app/src/${PROJECT_NAME}/out .
 
 ENTRYPOINT ["dotnet", "OpenFTTH.AddressChangeIndexer.dll"]
